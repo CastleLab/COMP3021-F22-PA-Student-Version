@@ -13,6 +13,7 @@ public class Sokoban {
      * @param args The command line args.
      */
     public static void main(@NotNull String[] args) {
-        System.out.println("Welcome to Sokoban.");
+        var game = SokobanGameFactory.createTUIGame();
+        game.run();
     }
 }
