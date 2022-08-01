@@ -38,6 +38,7 @@ tasks {
         }
     }
     withType<JavaExec> {
+        standardInput = System.`in`
         jvmArgs("--enable-preview")
     }
     withType<Jar> {

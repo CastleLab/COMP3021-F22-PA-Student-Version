@@ -26,6 +26,7 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     @Override
     public void run() {
+        System.out.println("Sokoban game is ready.");
         while (!shouldStop()) {
             var action = inputEngine.fetchAction();
             if (action.isPresent()) {
