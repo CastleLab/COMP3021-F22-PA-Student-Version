@@ -18,7 +18,7 @@ public class SokobanGameFactory {
     public static SokobanGame createTUIGame() {
         return new TerminalSokobanGame(
                 new TerminalInputEngine(System.in),
-                new TerminalRenderingEngine()
+                new TerminalRenderingEngine(System.out)
         );
     }
 }
