@@ -33,12 +33,12 @@ public class TerminalInputEngine implements InputEngine {
     public Optional<? extends Action> fetchAction() {
         System.out.print(">>> ");
         var inputLine = terminalScanner.nextLine();
-        var moveRegex = Pattern.compile("^(?<direction>[LRUD])(\\s+(?<steps>\\d+))?$");
+        var moveRegex = Pattern.compile("^(?<direction>[LRUDlrud])(\\s+(?<steps>\\d+))?$");
         var moveMatcher = moveRegex.matcher(inputLine);
         if (moveMatcher.find()) {
             var stepsStr = moveMatcher.group("steps");
             var steps = stepsStr != null ? Integer.parseInt(stepsStr) : 1;
-            return switch (moveMatcher.group("direction")) {
+            return switch (moveMatcher.group("direction").toUpperCase()) {
                 case "L" -> Optional.of(new Move.Left(steps));
                 case "R" -> Optional.of(new Move.Right(steps));
                 case "U" -> Optional.of(new Move.Up(steps));
@@ -46,7 +46,7 @@ public class TerminalInputEngine implements InputEngine {
                 default -> throw new ShouldNotReachException();
             };
         }
-        if (inputLine.equals("Undo"))
+        if (inputLine.equalsIgnoreCase("Undo"))
             return Optional.of(new Undo());
         return Optional.of(new InvalidInput("Invalid input sequence"));
     }
