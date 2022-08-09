@@ -1,16 +1,22 @@
 package hk.ust.comp3021.actions;
 
+import hk.ust.comp3021.utils.ShouldNotReachException;
+import jdk.dynalink.linker.LinkerServices;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+
 /**
  * An actions of moving a player.
  */
-public sealed class Move extends Action {
+public abstract sealed class Move extends Action permits Move.Down, Move.Left, Move.Right, Move.Up {
 
     private final int steps;
 
     /**
      * @param steps The number of steps.
      */
-    public Move(int steps) {
+    protected Move(int steps) {
         this.steps = steps;
     }
 
@@ -22,6 +28,27 @@ public sealed class Move extends Action {
     }
 
     /**
+     * Break down one move into an array of one-step moves.
+     *
+     * @return an array of one-step moves.
+     */
+    public @NotNull Move[] breakdown() {
+        var moves = new Move[this.steps];
+        if (this instanceof Move.Down) {
+            Arrays.fill(moves, new Move.Down(1));
+        } else if (this instanceof Move.Left) {
+            Arrays.fill(moves, new Move.Left(1));
+        } else if (this instanceof Move.Right) {
+            Arrays.fill(moves, new Move.Right(1));
+        } else if (this instanceof Move.Up) {
+            Arrays.fill(moves, new Move.Up(1));
+        } else {
+            throw new ShouldNotReachException();
+        }
+        return moves;
+    }
+
+    /**
      * The action of moving down.
      */
     public static final class Down extends Move {
@@ -29,7 +56,6 @@ public sealed class Move extends Action {
          * @param steps The number of steps.
          */
         public Down(int steps) {
-
             super(steps);
         }
     }

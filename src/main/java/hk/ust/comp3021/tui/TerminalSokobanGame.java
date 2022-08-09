@@ -3,6 +3,8 @@ package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.game.*;
 
+import java.io.File;
+
 /**
  * A Sokoban game running in the terminal.
  */
@@ -15,22 +17,21 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     /**
      * Create a new instance of TerminalSokobanGame.
-     *
-     * @param inputEngine     The input engine.
-     * @param renderingEngine The rendering engine.
      */
-    public TerminalSokobanGame(InputEngine inputEngine, RenderingEngine renderingEngine) {
-        this.inputEngine = inputEngine;
-        this.renderingEngine = renderingEngine;
+    public TerminalSokobanGame(GameBoard gameBoard) {
+        this.state = gameBoard.createGameSession();
+        this.inputEngine = new TerminalInputEngine(System.in, gameBoard.getPlayerIds());
+        this.renderingEngine = new TerminalRenderingEngine(System.out);
     }
 
     @Override
     public void run() {
         System.out.println("Sokoban game is ready.");
+        renderingEngine.render(state);
         while (!shouldStop()) {
             var action = inputEngine.fetchAction();
             if (action.isPresent()) {
-                processAction(action.get());
+                processAction(action.get().playerId(), action.get().action());
                 renderingEngine.render(state);
             }
         }
