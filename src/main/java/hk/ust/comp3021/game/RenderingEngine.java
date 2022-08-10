@@ -11,4 +11,6 @@ public interface RenderingEngine {
      * @param state The current game state.
      */
     void render(GameState state);
+
+    void message(String string);
 }

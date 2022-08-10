@@ -1,4 +1,9 @@
 package hk.ust.comp3021.actions;
 
-public record PlayerAction(int playerId, Action action) {
+import org.jetbrains.annotations.Nullable;
+
+public record PlayerAction(@Nullable Integer playerId, Action[] actions) {
+    public PlayerAction(@Nullable Integer playerId, Action action) {
+        this(playerId, new Action[]{action});
+    }
 }

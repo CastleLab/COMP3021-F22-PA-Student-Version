@@ -5,7 +5,7 @@ import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.utils.ShouldNotReachException;
 
 import java.io.InputStream;
-import java.util.Optional;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -19,36 +19,49 @@ public class TerminalInputEngine implements InputEngine {
      */
     private final Scanner terminalScanner;
 
-    private final int[] playerIds;
-
     /**
      * @param terminalStream The stream to read terminal inputs.
      */
-    public TerminalInputEngine(InputStream terminalStream, int[] playerIds) {
+    public TerminalInputEngine(InputStream terminalStream) {
         this.terminalScanner = new Scanner(terminalStream);
-        this.playerIds = playerIds;
     }
 
     @Override
-    public Optional<? extends PlayerAction> fetchAction() {
-        System.out.print(">>> ");
-        var playerId = playerIds[0];
-        var inputLine = terminalScanner.nextLine();
-        var moveRegex = Pattern.compile("^(?<direction>[LRUDlrud])(\\s+(?<steps>\\d+))?$");
-        var moveMatcher = moveRegex.matcher(inputLine);
-        if (moveMatcher.find()) {
-            var stepsStr = moveMatcher.group("steps");
-            var steps = stepsStr != null ? Integer.parseInt(stepsStr) : 1;
-            return switch (moveMatcher.group("direction").toUpperCase()) {
-                case "L" -> Optional.of(new PlayerAction(playerId, new Move.Left(steps)));
-                case "R" -> Optional.of(new PlayerAction(playerId, new Move.Right(steps)));
-                case "U" -> Optional.of(new PlayerAction(playerId, new Move.Up(steps)));
-                case "D" -> Optional.of(new PlayerAction(playerId, new Move.Down(steps)));
-                default -> throw new ShouldNotReachException();
-            };
+    public PlayerAction fetchAction(int[] playerIds) {
+        if (playerIds.length > 2 || playerIds.length < 1) {
+            throw new IllegalArgumentException("too few or too many players. Only 1 or 2 players are supported.");
         }
-        if (inputLine.equalsIgnoreCase("Undo"))
-            return Optional.of(new PlayerAction(playerIds[0], new Undo()));
-        return Optional.of(new PlayerAction(playerIds[0], new InvalidInput("Invalid input sequence")));
+        PlayerAction playerAction = null;
+        while (playerAction == null) {
+            System.out.print(">>> ");
+            var inputLine = terminalScanner.nextLine();
+            var moveRegex = Pattern.compile("^(?<action>[WASDwasdRrHJKLhjklUu])(\\s*(?<repeat>\\d+))?$");
+            var moveMatcher = moveRegex.matcher(inputLine);
+            if (moveMatcher.find()) {
+                var repeatR = moveMatcher.group("repeat");
+                var repeat = repeatR != null ? Integer.parseInt(repeatR) : 1;
+                var action = switch (moveMatcher.group("action").toUpperCase()) {
+                    case "W", "K" -> new Move.Up(1);
+                    case "A", "H" -> new Move.Left(1);
+                    case "S", "J" -> new Move.Down(1);
+                    case "D", "L" -> new Move.Right(1);
+                    case "R", "U" -> new Undo();
+                    default -> throw new ShouldNotReachException();
+                };
+                var playerId = switch (moveMatcher.group("action").toUpperCase()) {
+                    case "W", "A", "S", "D", "R" -> playerIds[0];
+                    case "H", "J", "K", "L", "U" -> playerIds.length == 1 ? playerIds[0] : playerIds[1];
+                    default -> throw new ShouldNotReachException();
+                };
+                var actions = new Action[repeat];
+                Arrays.fill(actions, action);
+                playerAction = new PlayerAction(playerId, actions);
+            } else if (inputLine.equalsIgnoreCase("exit")) {
+                playerAction = new PlayerAction(null, new Exit());
+            } else {
+                System.out.println("Invalid input");
+            }
+        }
+        return playerAction;
     }
 }

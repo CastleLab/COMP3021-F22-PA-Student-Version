@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The state of the Sokoban Game.
@@ -25,10 +26,14 @@ public class GameState {
 
     private final Set<Position> destinations;
 
+    private int undoQuota;
+
+    private Transition currentTransition = new Transition();
+
     GameState(@NotNull GameBoard board) {
         this.entities = new HashMap<>(board.getMap());
         this.destinations = new HashSet<>(board.getDestinations());
-        this.history.push(new Transition());
+        undoQuota = board.getUndoLimit();
     }
 
     public @Nullable Position getPlayerPositionById(int id) {
@@ -50,8 +55,16 @@ public class GameState {
         return destinations;
     }
 
+    public int getUndoQuota() {
+        return undoQuota;
+    }
+
+    public Stack<Transition> getHistory() {
+        return history;
+    }
+
     public boolean isWin() {
-        return this.destinations.stream().allMatch(this.entities::containsKey);
+        return this.destinations.stream().allMatch(p -> this.entities.get(p) instanceof Box);
     }
 
     /**
@@ -97,22 +110,19 @@ public class GameState {
      * @param from
      * @param to
      */
-    public void move(Position from, Position to) {
-        // Game history checkpoint reached if any box is moved.
-        var checkpointReached = this.history.peek().moves.keySet().stream()
-            .map(this.entities::get)
-            .anyMatch(e -> e instanceof Box);
-        if (checkpointReached) {
-            this.history.push(new Transition());
-        }
-
+    void move(Position from, Position to) {
         // move entity
         var entity = this.entities.remove(from);
         if (entity == null) return;
         this.entities.put(to, entity);
 
         // append to history
-        this.history.peek().add(from, to);
+        this.currentTransition.add(from, to);
+    }
+
+    void checkpoint() {
+        this.history.push(this.currentTransition);
+        this.currentTransition = new Transition();
     }
 
     /**
@@ -128,20 +138,26 @@ public class GameState {
                 var entity = this.entities.remove(e.getKey());
                 return Map.entry(e.getValue(), entity);
             })
+            .toList()
             .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
     }
 
     /**
      * Revert to the last checkpoint in history.
+     * This method assumes there is still undo quota left.
+     * If the history is empty, undo quota is not decreased.
      */
     public void undo() {
-        if (this.history.empty()) return;
-        var undoTransition = this.history.pop().reverse();
+        var undoTransition = this.currentTransition.reverse();
         this.applyTransition(undoTransition);
+        if (this.history.empty()) return;
+        undoTransition = this.history.pop().reverse();
+        this.applyTransition(undoTransition);
+        this.undoQuota--;
     }
 
     static class Transition {
-        private final Map<Position, Position> moves = new HashMap<>();
+        private final Map<Position, Position> moves;
 
         public void add(Position from, Position to) {
             var key = this.moves.entrySet().stream()
@@ -151,10 +167,29 @@ public class GameState {
             this.moves.put(key, to);
         }
 
+        public Transition(Map<Position, Position> moves) {
+            this.moves = moves;
+        }
+
+        public Transition() {
+            this.moves = new HashMap<>();
+        }
+
         public Transition reverse() {
-            var tr = new Transition();
-            this.moves.forEach((k, v) -> tr.add(v, k));
-            return tr;
+            var moves = this.moves.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+            return new Transition(moves);
+        }
+
+        public boolean empty() {
+            return this.moves.size() == 0;
+        }
+
+        @Override
+        public String toString() {
+            var moves = this.moves.entrySet().stream()
+                .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
+                .toList();
+            return String.join(",", moves);
         }
     }
 }

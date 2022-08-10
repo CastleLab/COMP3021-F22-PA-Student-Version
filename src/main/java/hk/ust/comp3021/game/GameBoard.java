@@ -1,14 +1,14 @@
 package hk.ust.comp3021.game;
 
-import hk.ust.comp3021.entities.*;
+import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Entity;
+import hk.ust.comp3021.entities.Player;
+import hk.ust.comp3021.entities.Wall;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A Sokoban game board.
@@ -27,17 +27,21 @@ public class GameBoard {
 
     private final Set<Position> destinations;
 
+    private final int undoLimit;
+
     /**
      * Initializes a new instance of GameBoard.
      *
      * @param map
+     * @param undoLimit
      */
-    public GameBoard(HashMap<Position, Entity> map, Set<Position> destinations) {
+    public GameBoard(HashMap<Position, Entity> map, Set<Position> destinations, int undoLimit) {
         this.map = Collections.unmodifiableMap(map);
         this.destinations = Collections.unmodifiableSet(destinations);
+        this.undoLimit = undoLimit;
     }
 
-    public static GameBoard loadGameMap(File mapFile) throws FileNotFoundException {
+    public static GameBoard loadGameMap(File mapFile, int undoLimit) throws FileNotFoundException {
         var players = new HashSet<Integer>();
         var map = new HashMap<Position, Entity>();
         var destinations = new HashSet<Position>();
@@ -67,10 +71,7 @@ public class GameBoard {
             x = 0;
             y++;
         }
-        if (players.size() > 2 || players.size() < 1) {
-            throw new IllegalArgumentException("too few or too many players. Only 1 or 2 players are supported.");
-        }
-        return new GameBoard(map, destinations);
+        return new GameBoard(map, destinations, undoLimit);
     }
 
     public @Unmodifiable Map<Position, Entity> getMap() {
@@ -81,9 +82,13 @@ public class GameBoard {
         return destinations;
     }
 
+    public int getUndoLimit() {
+        return undoLimit;
+    }
+
     public @Unmodifiable int[] getPlayerIds() {
         var idList = this.map.values().stream().filter(e -> e instanceof Player)
-            .map(p->((Player)p).getId())
+            .map(p -> ((Player) p).getId())
             .sorted()
             .toList();
         var ids = new int[idList.size()];
@@ -103,6 +108,4 @@ public class GameBoard {
     public GameState createGameSession() {
         return new GameState(this);
     }
-
-
 }

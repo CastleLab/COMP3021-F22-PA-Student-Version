@@ -2,6 +2,8 @@ package hk.ust.comp3021;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+
 /**
  * The holder of the entry point of the game.
  */
@@ -13,7 +15,26 @@ public class Sokoban {
      * @param args The command line args.
      */
     public static void main(@NotNull String[] args) {
-        var game = SokobanGameFactory.createTUIGame();
-        game.run();
+        if (args.length < 1) {
+            System.err.println("Map is not provided.");
+            System.exit(1);
+        }
+        var mapFile = args[0];
+        var undoLimit = 0;
+        if (args.length >= 2) {
+            try {
+                undoLimit = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.err.println("Failed to parse undo limit: " + e);
+                System.exit(1);
+            }
+        }
+        try {
+            var game = SokobanGameFactory.createTUIGame(mapFile, undoLimit);
+            game.run();
+        } catch (IOException e) {
+            System.err.println("Failed to load game map: " + e);
+            System.exit(1);
+        }
     }
 }

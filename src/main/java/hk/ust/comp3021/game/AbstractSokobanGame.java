@@ -30,8 +30,13 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             }
             return new ActionResult.Success(action);
         } else if (action instanceof Undo) {
-            this.state.undo();
-            return new ActionResult.Success(action);
+            // ensure there is still undo quota
+            if (this.state.getUndoQuota() != 0) {
+                this.state.undo();
+                return new ActionResult.Success(action);
+            } else {
+                return new ActionResult.Failed(action, "no more undo quota");
+            }
         } else {
             return new ActionResult.Failed(action, "invalid action");
         }
@@ -53,6 +58,8 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             if (this.state.getEntity(nextBoxPos) != null) return; // do nothing if the box cannot move forward.
             this.state.move(nextPlayerPos, nextBoxPos);
             this.state.move(playerPosition, nextPlayerPos);
+            // Game history checkpoint reached if any box is moved.
+            this.state.checkpoint();
         }
     }
 }

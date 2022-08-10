@@ -8,7 +8,6 @@ import hk.ust.comp3021.game.Position;
 import hk.ust.comp3021.game.RenderingEngine;
 
 import java.io.PrintStream;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -29,6 +28,8 @@ public class TerminalRenderingEngine implements RenderingEngine {
     @Override
     public void render(GameState state) {
         var builder = new StringBuilder();
+        var undo = state.getUndoQuota();
+        builder.append(String.format("Undo Quota: %d\n", undo < 0 ? "unlimited" : undo));
         var lines = state.getEntities().entrySet().stream()
             .collect(Collectors.groupingBy(e -> e.getKey().y()));
         int maxLineNumber = lines.keySet().stream().max(Integer::compare).orElse(-1);
@@ -53,5 +54,10 @@ public class TerminalRenderingEngine implements RenderingEngine {
             builder.append('\n');
         }
         System.out.println(builder.toString());
+    }
+
+    @Override
+    public void message(String string) {
+        System.out.println(string);
     }
 }
