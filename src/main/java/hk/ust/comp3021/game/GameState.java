@@ -76,7 +76,7 @@ public class GameState {
         var expandQueue = new ArrayDeque<Position>();
         var visited = new HashSet<Position>();
         var moves = new Move[]{
-            new Move.Down(1), new Move.Right(1), new Move.Left(1), new Move.Up(1)
+            new Move.Down(), new Move.Right(), new Move.Left(), new Move.Up()
         };
         this.entities.entrySet().stream()
             .filter(e -> e.getValue() instanceof Player)

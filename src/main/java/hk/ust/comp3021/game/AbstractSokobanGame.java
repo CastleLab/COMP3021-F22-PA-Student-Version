@@ -24,10 +24,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             throw new IllegalArgumentException("player does not exist");
         }
         if (action instanceof Move move) {
-            for (var m :
-                move.breakdown()) {
-                this.processOneStepMove(currentPlayerPos, m);
-            }
+            this.processOneStepMove(currentPlayerPos, move);
             return new ActionResult.Success(action);
         } else if (action instanceof Undo) {
             // ensure there is still undo quota

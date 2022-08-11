@@ -41,10 +41,10 @@ public class TerminalInputEngine implements InputEngine {
                 var repeatR = moveMatcher.group("repeat");
                 var repeat = repeatR != null ? Integer.parseInt(repeatR) : 1;
                 var action = switch (moveMatcher.group("action").toUpperCase()) {
-                    case "W", "K" -> new Move.Up(1);
-                    case "A", "H" -> new Move.Left(1);
-                    case "S", "J" -> new Move.Down(1);
-                    case "D", "L" -> new Move.Right(1);
+                    case "W", "K" -> new Move.Up();
+                    case "A", "H" -> new Move.Left();
+                    case "S", "J" -> new Move.Down();
+                    case "D", "L" -> new Move.Right();
                     case "R", "U" -> new Undo();
                     default -> throw new ShouldNotReachException();
                 };
