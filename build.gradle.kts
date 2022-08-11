@@ -1,3 +1,5 @@
+import proguard.gradle.ProGuardTask
+
 plugins {
     java
     application
@@ -19,6 +21,15 @@ java {
 
 application {
     mainClass.set("hk.ust.comp3021.Sokoban")
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.guardsquare:proguard-gradle:7.2.2")
+    }
 }
 
 dependencies {
@@ -69,5 +80,26 @@ tasks {
         )
 
         jvmArgs("--enable-preview")
+    }
+
+    create<ProGuardTask>("proguard") {
+        injars(jar.flatMap { it.archiveFile })
+        outjars(jar.flatMap { it.destinationDirectory.file("${project.name}-proguard.jar") })
+
+        libraryjars("${System.getProperty("java.home")}/jmods")
+        libraryjars(sourceSets.main.map {
+            (it.compileClasspath + it.runtimeClasspath).distinct() - jar.flatMap { it.archiveFile }.get().asFile
+        })
+
+        keep("public class hk.ust.comp3021.Sokoban { public static void main(java.lang.String[]); }")
+
+        printmapping(jar.flatMap { it.destinationDirectory.file("${project.name}-proguard-mapping.txt") })
+        overloadaggressively()
+        flattenpackagehierarchy()
+        allowaccessmodification()
+        mergeinterfacesaggressively()
+        dontskipnonpubliclibraryclassmembers()
+        useuniqueclassmembernames()
+        optimizationpasses(5)
     }
 }
