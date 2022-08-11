@@ -159,7 +159,7 @@ public class GameState {
     static class Transition {
         private final Map<Position, Position> moves;
 
-        public void add(Position from, Position to) {
+        void add(Position from, Position to) {
             var key = this.moves.entrySet().stream()
                 .filter(e -> e.getValue().equals(from))
                 .map(Map.Entry::getKey)
@@ -167,20 +167,20 @@ public class GameState {
             this.moves.put(key, to);
         }
 
-        public Transition(Map<Position, Position> moves) {
+        Transition(Map<Position, Position> moves) {
             this.moves = moves;
         }
 
-        public Transition() {
+        Transition() {
             this.moves = new HashMap<>();
         }
 
-        public Transition reverse() {
+        Transition reverse() {
             var moves = this.moves.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
             return new Transition(moves);
         }
 
-        public boolean empty() {
+        boolean empty() {
             return this.moves.size() == 0;
         }
 

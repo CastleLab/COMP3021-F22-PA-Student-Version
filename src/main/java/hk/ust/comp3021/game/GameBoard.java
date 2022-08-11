@@ -46,7 +46,8 @@ public class GameBoard {
         var map = new HashMap<Position, Entity>();
         var destinations = new HashSet<Position>();
         var scanner = new Scanner(mapFile);
-        int x = 0, y = 0;
+        int x = 0;
+        int y = 0;
         while (scanner.hasNextLine()) {
             var line = scanner.nextLine();
             for (char c :

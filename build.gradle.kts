@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    checkstyle
 }
 
 group = "hk.ust.comp3021"
