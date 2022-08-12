@@ -30,7 +30,7 @@ public class GameState {
 
     private Transition currentTransition = new Transition();
 
-    GameState(@NotNull GameBoard board) {
+    GameState(@NotNull GameMap board) {
         this.entities = new HashMap<>(board.getMap());
         this.destinations = new HashSet<>(board.getDestinations());
         undoQuota = board.getUndoLimit();

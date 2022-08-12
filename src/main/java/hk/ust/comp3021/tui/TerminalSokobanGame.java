@@ -4,7 +4,7 @@ package hk.ust.comp3021.tui;
 import hk.ust.comp3021.actions.ActionResult;
 import hk.ust.comp3021.actions.Exit;
 import hk.ust.comp3021.game.AbstractSokobanGame;
-import hk.ust.comp3021.game.GameBoard;
+import hk.ust.comp3021.game.GameMap;
 import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.game.RenderingEngine;
 
@@ -22,9 +22,9 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
     /**
      * Create a new instance of TerminalSokobanGame.
      */
-    public TerminalSokobanGame(GameBoard gameBoard) {
-        this.state = gameBoard.createGameSession();
-        this.playerIds = gameBoard.getPlayerIds();
+    public TerminalSokobanGame(GameMap gameMap) {
+        this.state = gameMap.createGameSession();
+        this.playerIds = gameMap.getPlayerIds();
         this.inputEngine = new TerminalInputEngine(System.in);
         this.renderingEngine = new TerminalRenderingEngine(System.out);
     }

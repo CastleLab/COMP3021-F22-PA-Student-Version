@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p/>
  * GameBoard is capable to create many GameState instances, each representing an ongoing game.
  */
-public class GameBoard {
+public class GameMap {
 
     @Unmodifiable
     private final Map<Position, Entity> map;
@@ -37,18 +37,18 @@ public class GameBoard {
      * @param map
      * @param undoLimit
      */
-    public GameBoard(HashMap<Position, Entity> map, Set<Position> destinations, int undoLimit) {
+    public GameMap(HashMap<Position, Entity> map, Set<Position> destinations, int undoLimit) {
         this.map = Collections.unmodifiableMap(map);
         this.destinations = Collections.unmodifiableSet(destinations);
         this.undoLimit = undoLimit;
     }
 
-    public static GameBoard loadGameMap(Path mapFile, int undoLimit) throws IOException {
+    public static GameMap loadGameMap(Path mapFile, int undoLimit) throws IOException {
         var fileContent = Files.readString(mapFile);
-        return GameBoard.parse(fileContent, undoLimit);
+        return GameMap.parse(fileContent, undoLimit);
     }
 
-    public static GameBoard parse(String gameBoardText, int undoLimit) {
+    public static GameMap parse(String gameBoardText, int undoLimit) {
         var players = new HashSet<Integer>();
         var map = new HashMap<Position, Entity>();
         var destinations = new HashSet<Position>();
@@ -75,7 +75,7 @@ public class GameBoard {
                 x++;
             }
         });
-        return new GameBoard(map, destinations, undoLimit);
+        return new GameMap(map, destinations, undoLimit);
     }
 
     public @Unmodifiable Map<Position, Entity> getMap() {

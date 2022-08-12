@@ -1,6 +1,6 @@
 package hk.ust.comp3021;
 
-import hk.ust.comp3021.game.GameBoard;
+import hk.ust.comp3021.game.GameMap;
 import hk.ust.comp3021.game.SokobanGame;
 import hk.ust.comp3021.tui.TerminalSokobanGame;
 
@@ -32,7 +32,7 @@ public class SokobanGameFactory {
         } else {
             file = Path.of(mapFile);
         }
-        var gameBoard = GameBoard.loadGameMap(file, undoLimit);
+        var gameBoard = GameMap.loadGameMap(file, undoLimit);
         return new TerminalSokobanGame(gameBoard);
     }
 }
