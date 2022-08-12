@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run with Map 01" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="hk.ust.comp3021.Sokoban" />
+    <module name="Sokoban.main" />
+    <option name="PROGRAM_PARAMETERS" value="$ProjectFileDir$/src/main/resources/map01.map" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="hk.ust.comp3021.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
