@@ -6,9 +6,11 @@ import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.entities.Wall;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A Sokoban game board.
@@ -41,17 +43,20 @@ public class GameBoard {
         this.undoLimit = undoLimit;
     }
 
-    public static GameBoard loadGameMap(File mapFile, int undoLimit) throws FileNotFoundException {
+    public static GameBoard loadGameMap(Path mapFile, int undoLimit) throws IOException {
+        var fileContent = Files.readString(mapFile);
+        return GameBoard.parse(fileContent, undoLimit);
+    }
+
+    public static GameBoard parse(String gameBoardText, int undoLimit) {
         var players = new HashSet<Integer>();
         var map = new HashMap<Position, Entity>();
         var destinations = new HashSet<Position>();
-        var scanner = new Scanner(mapFile);
-        int x = 0;
-        int y = 0;
-        while (scanner.hasNextLine()) {
-            var line = scanner.nextLine();
-            for (char c :
-                line.toCharArray()) {
+        AtomicInteger lineNumber = new AtomicInteger();
+        gameBoardText.lines().forEachOrdered(line -> {
+            int x = 0;
+            int y = lineNumber.getAndIncrement();
+            for (char c : line.toCharArray()) {
                 if (c == '#') { // walls
                     map.put(new Position(x, y), new Wall());
                 } else if (c == '@') {  // destinations
@@ -59,7 +64,7 @@ public class GameBoard {
                 } else if (c >= 'a' && c <= 'z') { // lower case letters are boxes for each player (corresponding upper case letter)
                     var playerId = c - ('a' - 'A');
                     map.put(new Position(x, y), new Box(playerId));
-                } else if (c >= 'A' && c <= 'Z') {
+                } else if (Character.isUpperCase(c)) {
                     var playerId = (int) c;
                     if (players.contains(playerId)) {
                         throw new IllegalArgumentException("duplicate players detected in the map");
@@ -69,9 +74,7 @@ public class GameBoard {
                 }
                 x++;
             }
-            x = 0;
-            y++;
-        }
+        });
         return new GameBoard(map, destinations, undoLimit);
     }
 
@@ -89,9 +92,9 @@ public class GameBoard {
 
     public @Unmodifiable int[] getPlayerIds() {
         var idList = this.map.values().stream().filter(e -> e instanceof Player)
-            .map(p -> ((Player) p).getId())
-            .sorted()
-            .toList();
+                .map(p -> ((Player) p).getId())
+                .sorted()
+                .toList();
         var ids = new int[idList.size()];
         for (int i = 0; i < idList.size(); i++) {
             ids[i] = idList.get(i);

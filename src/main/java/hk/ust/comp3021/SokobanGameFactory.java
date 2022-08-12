@@ -4,8 +4,9 @@ import hk.ust.comp3021.game.GameBoard;
 import hk.ust.comp3021.game.SokobanGame;
 import hk.ust.comp3021.tui.TerminalSokobanGame;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 
 /**
  * Factory for creating Sokoban games
@@ -18,14 +19,18 @@ public class SokobanGameFactory {
      * @return The Sokoban game.
      */
     public static SokobanGame createTUIGame(String mapFile, int undoLimit) throws IOException {
-        File file;
+        Path file;
         if (!mapFile.endsWith(".map")) {
             // treat as built-in maps
             var resource = SokobanGameFactory.class.getClassLoader().getResource(mapFile + ".map");
             if (resource == null) throw new RuntimeException("No such built-in map: " + mapFile);
-            file = new File(resource.getFile());
+            try {
+                file = Path.of(resource.toURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Error loading map:" + mapFile);
+            }
         } else {
-            file = new File(mapFile);
+            file = Path.of(mapFile);
         }
         var gameBoard = GameBoard.loadGameMap(file, undoLimit);
         return new TerminalSokobanGame(gameBoard);
