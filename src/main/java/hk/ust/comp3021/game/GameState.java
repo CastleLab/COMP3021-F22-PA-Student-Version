@@ -2,6 +2,7 @@ package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.actions.Move;
 import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Entity;
 import hk.ust.comp3021.entities.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,10 @@ public class GameState {
 
     private final Map<Position, Entity> entities;
 
+    private final int boardWidth;
+
+    private final int boardHeight;
+
     private final Set<Position> destinations;
 
     private int undoQuota;
@@ -31,16 +36,28 @@ public class GameState {
     private Transition currentTransition = new Transition();
 
     GameState(@NotNull GameMap board) {
-        this.entities = new HashMap<>(board.getMap());
+        this.entities = new HashMap<>();
+        this.boardWidth = board.getWidth();
+        this.boardHeight = board.getHeight();
+
+        for (int x = 0; x < boardWidth; x++) {
+            for (int y = 0; y < boardHeight; y++) {
+                var pos = Position.of(x, y);
+                var entity = board.getEntity(pos);
+                if (!(entity instanceof Empty)) {
+                    this.entities.put(pos, entity);
+                }
+            }
+        }
         this.destinations = new HashSet<>(board.getDestinations());
         undoQuota = board.getUndoLimit();
     }
 
     public @Nullable Position getPlayerPositionById(int id) {
         return this.entities.entrySet().stream()
-            .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
-            .map(Map.Entry::getKey)
-            .findFirst().orElse(null);
+                .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(null);
     }
 
     public @Nullable Entity getEntity(Position position) {
@@ -76,17 +93,17 @@ public class GameState {
         var expandQueue = new ArrayDeque<Position>();
         var visited = new HashSet<Position>();
         var moves = new Move[]{
-            new Move.Down(), new Move.Right(), new Move.Left(), new Move.Up()
+                new Move.Down(), new Move.Right(), new Move.Left(), new Move.Up()
         };
         this.entities.entrySet().stream()
-            .filter(e -> e.getValue() instanceof Player)
-            .forEach(e -> expandQueue.add(e.getKey()));
+                .filter(e -> e.getValue() instanceof Player)
+                .forEach(e -> expandQueue.add(e.getKey()));
         while (!expandQueue.isEmpty()) {
             var p = expandQueue.pop();
             if (visited.contains(p)) continue;
             visited.add(p);
             for (var m :
-                moves) {
+                    moves) {
                 var adj = p.shift(m);
                 var entity = this.entities.get(adj);
                 if (entity == null || entity instanceof Player) {
@@ -134,12 +151,12 @@ public class GameState {
      */
     private void applyTransition(Transition transition) {
         transition.moves.entrySet().stream()
-            .map(e -> {
-                var entity = this.entities.remove(e.getKey());
-                return Map.entry(e.getValue(), entity);
-            })
-            .toList()
-            .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
+                .map(e -> {
+                    var entity = this.entities.remove(e.getKey());
+                    return Map.entry(e.getValue(), entity);
+                })
+                .toList()
+                .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
     }
 
     /**
@@ -156,14 +173,22 @@ public class GameState {
         this.undoQuota--;
     }
 
+    public int getBoardWidth() {
+        return boardWidth;
+    }
+
+    public int getBoardHeight() {
+        return boardHeight;
+    }
+
     static class Transition {
         private final Map<Position, Position> moves;
 
         void add(Position from, Position to) {
             var key = this.moves.entrySet().stream()
-                .filter(e -> e.getValue().equals(from))
-                .map(Map.Entry::getKey)
-                .findFirst().orElse(from);
+                    .filter(e -> e.getValue().equals(from))
+                    .map(Map.Entry::getKey)
+                    .findFirst().orElse(from);
             this.moves.put(key, to);
         }
 
@@ -187,8 +212,8 @@ public class GameState {
         @Override
         public String toString() {
             var moves = this.moves.entrySet().stream()
-                .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
-                .toList();
+                    .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
+                    .toList();
             return String.join(",", moves);
         }
     }

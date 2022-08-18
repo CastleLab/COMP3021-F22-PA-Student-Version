@@ -1,6 +1,7 @@
 package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.entities.Wall;
 import hk.ust.comp3021.game.GameState;
@@ -29,35 +30,30 @@ public class TerminalRenderingEngine implements RenderingEngine {
     public void render(GameState state) {
         var builder = new StringBuilder();
         var undo = state.getUndoQuota();
-        builder.append(String.format("Undo Quota: %d\n", undo < 0 ? "unlimited" : undo));
+        var undoQuotaText = String.format("Undo Quota: %s\n", undo < 0 ? "unlimited" : String.valueOf(undo));
+        builder.append(undoQuotaText);
         var lines = state.getEntities().entrySet().stream()
-            .collect(Collectors.groupingBy(e -> e.getKey().y()));
-        int maxLineNumber = lines.keySet().stream().max(Integer::compare).orElse(-1);
-        for (int y = 0; y <= maxLineNumber; y++) {
+                .collect(Collectors.groupingBy(e -> e.getKey().y()));
+        for (int y = 0; y <= state.getBoardHeight(); y++) {
             var line = lines.get(y).stream()
-                .collect(Collectors.toMap(e -> e.getKey().x(), Map.Entry::getValue));
-            int maxLineWidth = line.keySet().stream().max(Integer::compare).orElse(-1);
-            for (int x = 0; x <= maxLineWidth; x++) {
+                    .collect(Collectors.toMap(e -> e.getKey().x(), Map.Entry::getValue));
+            for (int x = 0; x <= state.getBoardWidth(); x++) {
                 var entity = line.get(x);
-                if (entity == null && state.getDestinations().contains(new Position(x, y))) {
-                    builder.append('@');
-                } else if (entity instanceof Wall) {
-                    builder.append('#');
-                } else if (entity instanceof Box box) {
-                    builder.append((char) (box.getPlayerId() + 'a' - 'A'));
-                } else if (entity instanceof Player player) {
-                    builder.append((char) (player.getId()));
-                } else {
-                    builder.append('.');
-                }
+                var charToPrint = switch (entity) {
+                    case Wall ignored -> '#';
+                    case Box b -> Character.toUpperCase(b.getPlayerId());
+                    case Player p -> (char) p.getId();
+                    case Empty ignored -> state.getDestinations().contains(new Position(x, y)) ? '@' : '.';
+                };
+                builder.append(charToPrint);
             }
             builder.append('\n');
         }
-        System.out.println(builder.toString());
+        outputSteam.println(builder.toString());
     }
 
     @Override
     public void message(String string) {
-        System.out.println(string);
+        outputSteam.println(string);
     }
 }

@@ -1,9 +1,6 @@
 package hk.ust.comp3021.game;
 
-import hk.ust.comp3021.entities.Box;
-import hk.ust.comp3021.entities.Entity;
-import hk.ust.comp3021.entities.Player;
-import hk.ust.comp3021.entities.Wall;
+import hk.ust.comp3021.entities.*;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
@@ -27,9 +24,22 @@ public class GameMap {
     @Unmodifiable
     private final Map<Position, Entity> map;
 
+    private final int width;
+
+    private final int height;
+
     private final Set<Position> destinations;
 
     private final int undoLimit;
+
+
+    public GameMap(int width, int height, Set<Position> destinations, int undoLimit) {
+        this.width = width;
+        this.height = height;
+        this.destinations = destinations;
+        this.undoLimit = undoLimit;
+        this.map = new HashMap<>();
+    }
 
     /**
      * Initializes a new instance of GameBoard.
@@ -37,10 +47,12 @@ public class GameMap {
      * @param map
      * @param undoLimit
      */
-    public GameMap(HashMap<Position, Entity> map, Set<Position> destinations, int undoLimit) {
+    private GameMap(HashMap<Position, Entity> map, Set<Position> destinations, int undoLimit) {
         this.map = Collections.unmodifiableMap(map);
         this.destinations = Collections.unmodifiableSet(destinations);
         this.undoLimit = undoLimit;
+        this.width = map.keySet().stream().mapToInt(Position::x).max().orElse(0);
+        this.height = map.keySet().stream().mapToInt(Position::y).max().orElse(0);
     }
 
     public static GameMap loadGameMap(Path mapFile, int undoLimit) throws IOException {
@@ -78,8 +90,8 @@ public class GameMap {
         return new GameMap(map, destinations, undoLimit);
     }
 
-    public @Unmodifiable Map<Position, Entity> getMap() {
-        return map;
+    public Entity getEntity(Position position) {
+        return map.getOrDefault(position, new Empty());
     }
 
     public @Unmodifiable Set<Position> getDestinations() {
@@ -111,5 +123,13 @@ public class GameMap {
      */
     public GameState createGameSession() {
         return new GameState(this);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }
