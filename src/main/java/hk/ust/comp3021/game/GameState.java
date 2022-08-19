@@ -37,8 +37,8 @@ public class GameState {
 
     GameState(@NotNull GameMap board) {
         this.entities = new HashMap<>();
-        this.boardWidth = board.getWidth();
-        this.boardHeight = board.getHeight();
+        this.boardWidth = board.getMaxWidth();
+        this.boardHeight = board.getMaxHeight();
 
         for (int x = 0; x < boardWidth; x++) {
             for (int y = 0; y < boardHeight; y++) {
@@ -104,12 +104,12 @@ public class GameState {
             visited.add(p);
             for (var m :
                     moves) {
-                var adj = p.shift(m);
+                var adj = m.nextPosition(p);
                 var entity = this.entities.get(adj);
                 if (entity == null || entity instanceof Player) {
                     expandQueue.add(adj);
                 } else if (entity instanceof Box) {
-                    var e = this.entities.get(adj.shift(m));
+                    var e = this.entities.get(m.nextPosition(adj));
                     // FIXME there is a bug in this logic. Some corner deadlock cases of multiple players cannot be recognized.
                     if (e == null || e instanceof Player) {
                         return false; // the box is movable by the player.

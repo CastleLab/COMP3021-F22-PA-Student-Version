@@ -1,6 +1,8 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.entities.*;
+import hk.ust.comp3021.utils.NotImplementedException;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.IOException;
@@ -24,18 +26,18 @@ public class GameMap {
     @Unmodifiable
     private final Map<Position, Entity> map;
 
-    private final int width;
+    private final int maxWidth;
 
-    private final int height;
+    private final int maxHeight;
 
     private final Set<Position> destinations;
 
     private final int undoLimit;
 
 
-    public GameMap(int width, int height, Set<Position> destinations, int undoLimit) {
-        this.width = width;
-        this.height = height;
+    public GameMap(int maxWidth, int maxHeight, Set<Position> destinations, int undoLimit) {
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
         this.destinations = destinations;
         this.undoLimit = undoLimit;
         this.map = new HashMap<>();
@@ -51,15 +53,22 @@ public class GameMap {
         this.map = Collections.unmodifiableMap(map);
         this.destinations = Collections.unmodifiableSet(destinations);
         this.undoLimit = undoLimit;
-        this.width = map.keySet().stream().mapToInt(Position::x).max().orElse(0);
-        this.height = map.keySet().stream().mapToInt(Position::y).max().orElse(0);
+        this.maxWidth = map.keySet().stream().mapToInt(Position::x).max().orElse(0) + 1;
+        this.maxHeight = map.keySet().stream().mapToInt(Position::y).max().orElse(0) + 1;
     }
 
-    public static GameMap loadGameMap(Path mapFile, int undoLimit) throws IOException {
+    public static GameMap loadFromFile(Path mapFile, int undoLimit) throws IOException {
         var fileContent = Files.readString(mapFile);
         return GameMap.parse(fileContent, undoLimit);
     }
 
+    /**
+     * Parses the map from a string representation.
+     *
+     * @param gameBoardText The string representation.
+     * @param undoLimit     The limit on the number of undo.
+     * @return The parsed GameMap object.
+     */
     public static GameMap parse(String gameBoardText, int undoLimit) {
         var players = new HashSet<Integer>();
         var map = new HashMap<Position, Entity>();
@@ -90,8 +99,13 @@ public class GameMap {
         return new GameMap(map, destinations, undoLimit);
     }
 
+    @Nullable
     public Entity getEntity(Position position) {
-        return map.getOrDefault(position, new Empty());
+        return map.get(position);
+    }
+
+    public void putEntity(Position position, Entity entity){
+        throw new NotImplementedException();
     }
 
     public @Unmodifiable Set<Position> getDestinations() {
@@ -125,11 +139,11 @@ public class GameMap {
         return new GameState(this);
     }
 
-    public int getWidth() {
-        return width;
+    public int getMaxWidth() {
+        return maxWidth;
     }
 
-    public int getHeight() {
-        return height;
+    public int getMaxHeight() {
+        return maxHeight;
     }
 }

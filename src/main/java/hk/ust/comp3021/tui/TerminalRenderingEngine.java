@@ -44,6 +44,7 @@ public class TerminalRenderingEngine implements RenderingEngine {
                     case Box b -> Character.toUpperCase(b.getPlayerId());
                     case Player p -> (char) p.getId();
                     case Empty ignored -> state.getDestinations().contains(new Position(x, y)) ? '@' : '.';
+                    case null -> ' ';
                 };
                 builder.append(charToPrint);
             }

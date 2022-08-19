@@ -44,14 +44,14 @@ public abstract class AbstractSokobanGame implements SokobanGame {
      * @param move           One-step move. We assume every move has only one step.
      */
     private void processOneStepMove(Position playerPosition, Move move) {
-        var nextPlayerPos = playerPosition.shift(move);
+        var nextPlayerPos = move.nextPosition(playerPosition);
         var nextEntity = this.state.getEntity(nextPlayerPos);
         if (nextEntity == null) {
             this.state.move(playerPosition, nextPlayerPos); // move if next place is empty
         } else if (nextEntity instanceof Wall || nextEntity instanceof Player) {
             return; // do nothing if next place is occupied by wall or another player.
         } else if (nextEntity instanceof Box) {
-            var nextBoxPos = nextPlayerPos.shift(move);
+            var nextBoxPos = move.nextPosition(nextPlayerPos);
             if (this.state.getEntity(nextBoxPos) != null) return; // do nothing if the box cannot move forward.
             this.state.move(nextPlayerPos, nextBoxPos);
             this.state.move(playerPosition, nextPlayerPos);

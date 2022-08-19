@@ -32,7 +32,7 @@ public class SokobanGameFactory {
         } else {
             file = Path.of(mapFile);
         }
-        var gameBoard = GameMap.loadGameMap(file, undoLimit);
+        var gameBoard = GameMap.loadFromFile(file, undoLimit);
         return new TerminalSokobanGame(gameBoard);
     }
 }
