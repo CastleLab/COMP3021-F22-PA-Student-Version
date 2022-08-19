@@ -10,7 +10,8 @@ public final class InvalidInput extends Action {
     /**
      * @param message The error message.
      */
-    public InvalidInput(String message) {
+    public InvalidInput(int initiator, String message) {
+        super(initiator);
         this.message = message;
     }
 

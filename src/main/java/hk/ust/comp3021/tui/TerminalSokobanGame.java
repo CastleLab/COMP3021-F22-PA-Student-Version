@@ -17,14 +17,11 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     private final RenderingEngine renderingEngine;
 
-    private final int[] playerIds;
-
     /**
      * Create a new instance of TerminalSokobanGame.
      */
     public TerminalSokobanGame(GameMap gameMap) {
-        this.state = gameMap.createGameSession();
-        this.playerIds = gameMap.getPlayerIds();
+        super(gameMap.createGameSession());
         this.inputEngine = new TerminalInputEngine(System.in);
         this.renderingEngine = new TerminalRenderingEngine(System.out);
     }
@@ -34,28 +31,25 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
         System.out.println("Sokoban game is ready.");
         renderingEngine.render(state);
         while (!shouldStop()) {
-            var action = inputEngine.fetchAction(this.playerIds);
-            for (var act :
-                action.actions()) {
-                if (act instanceof Exit) {
-                    System.out.println("Game exits.");
-                    return;
-                }
-                if (action.playerId() == null) throw new IllegalArgumentException();
-                var result = processAction(action.playerId(), act);
-                if (result instanceof ActionResult.Failed r) {
-                    renderingEngine.message(r.getReason());
-                    break;
-                }
+            System.out.println(">>> ");
+            var action = inputEngine.fetchAction();
+            if (action instanceof Exit) {
+                System.out.println("Game exits.");
+                return;
+            }
+            var result = processAction(action);
+            if (result instanceof ActionResult.Failed r) {
+                renderingEngine.message(r.getReason());
+                break;
             }
             renderingEngine.render(state);
         }
         if (this.state.isWin()) {
-            System.out.println("You win.");
+            renderingEngine.message("You win.");
         } else if (this.state.isDeadlock()) {
-            System.out.println("You lose.");
+            renderingEngine.message("You lose.");
         } else {
-            System.out.println("Exit unexpectedly.");
+            renderingEngine.message("Exit unexpectedly.");
         }
     }
 }

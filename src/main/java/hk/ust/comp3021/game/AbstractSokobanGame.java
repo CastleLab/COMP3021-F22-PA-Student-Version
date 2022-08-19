@@ -1,9 +1,6 @@
 package hk.ust.comp3021.game;
 
-import hk.ust.comp3021.actions.Action;
-import hk.ust.comp3021.actions.ActionResult;
-import hk.ust.comp3021.actions.Move;
-import hk.ust.comp3021.actions.Undo;
+import hk.ust.comp3021.actions.*;
 import hk.ust.comp3021.entities.Box;
 import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.entities.Wall;
@@ -12,14 +9,21 @@ import hk.ust.comp3021.entities.Wall;
  * A base implementation of Sokoban Game.
  */
 public abstract class AbstractSokobanGame implements SokobanGame {
-    protected GameState state;
+    protected final GameState state;
+
+    protected AbstractSokobanGame(GameState gameState) {
+        this.state = gameState;
+    }
 
     protected boolean shouldStop() {
         return this.state.isWin() || this.state.isDeadlock();
     }
 
-    protected ActionResult processAction(int playerId, Action action) {
-        var currentPlayerPos = this.state.getPlayerPositionById(playerId);
+    protected ActionResult processAction(Action action) {
+        if (action instanceof InvalidInput){
+            return new ActionResult.Failed(action, ((InvalidInput) action).getMessage());
+        }
+        var currentPlayerPos = this.state.getPlayerPositionById(action.getInitiator());
         if (currentPlayerPos == null) {
             throw new IllegalArgumentException("player does not exist");
         }

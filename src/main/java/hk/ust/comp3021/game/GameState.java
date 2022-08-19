@@ -93,7 +93,7 @@ public class GameState {
         var expandQueue = new ArrayDeque<Position>();
         var visited = new HashSet<Position>();
         var moves = new Move[]{
-                new Move.Down(), new Move.Right(), new Move.Left(), new Move.Up()
+                new Move.Down(-1), new Move.Right(-1), new Move.Left(-1), new Move.Up(-1)
         };
         this.entities.entrySet().stream()
                 .filter(e -> e.getValue() instanceof Player)
@@ -102,8 +102,7 @@ public class GameState {
             var p = expandQueue.pop();
             if (visited.contains(p)) continue;
             visited.add(p);
-            for (var m :
-                    moves) {
+            for (var m : moves) {
                 var adj = m.nextPosition(p);
                 var entity = this.entities.get(adj);
                 if (entity == null || entity instanceof Player) {
