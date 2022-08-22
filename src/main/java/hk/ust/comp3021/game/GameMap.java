@@ -60,7 +60,7 @@ public class GameMap {
     /**
      * Parses the map from a string representation.
      *
-     * @param mapText   The string representation.
+     * @param mapText The string representation.
      * @return The parsed GameMap object.
      */
     public static GameMap parse(String mapText) {
@@ -71,8 +71,13 @@ public class GameMap {
         var firstLine = mapText.lines().findFirst();
         if (firstLine.isEmpty())
             throw new IllegalArgumentException("Invalid map file.");
-        var undoLimit = Integer.parseInt(firstLine.get());
-        mapText.lines().forEachOrdered(line -> {
+        var undoLimit = 0;
+        try {
+            undoLimit = Integer.parseInt(firstLine.get());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Failed to parse undo limit.", e);
+        }
+        mapText.lines().skip(1).forEachOrdered(line -> {
             int x = 0;
             int y = lineNumber.getAndIncrement();
             for (char c : line.toCharArray()) {
@@ -128,6 +133,14 @@ public class GameMap {
 
     // TODO validate map
 
+    /**
+     * Create a new game session.
+     *
+     * @return GameState
+     */
+    public GameState createGameSession() {
+        return new GameState(this);
+    }
 
     public int getMaxWidth() {
         return maxWidth;
