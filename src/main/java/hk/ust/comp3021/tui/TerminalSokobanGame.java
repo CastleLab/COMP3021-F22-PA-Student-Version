@@ -3,10 +3,7 @@ package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.actions.ActionResult;
 import hk.ust.comp3021.actions.Exit;
-import hk.ust.comp3021.game.AbstractSokobanGame;
-import hk.ust.comp3021.game.GameMap;
-import hk.ust.comp3021.game.InputEngine;
-import hk.ust.comp3021.game.RenderingEngine;
+import hk.ust.comp3021.game.*;
 
 /**
  * A Sokoban game running in the terminal.
@@ -21,7 +18,7 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
      * Create a new instance of TerminalSokobanGame.
      */
     public TerminalSokobanGame(GameMap gameMap) {
-        super(gameMap.createGameSession());
+        super(new GameState(gameMap));
         this.inputEngine = new TerminalInputEngine(System.in);
         this.renderingEngine = new TerminalRenderingEngine(System.out);
     }

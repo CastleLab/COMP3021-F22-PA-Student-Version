@@ -6,6 +6,7 @@ import hk.ust.comp3021.tui.TerminalSokobanGame;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -32,7 +33,19 @@ public class SokobanGameFactory {
         } else {
             file = Path.of(mapFile);
         }
-        var gameBoard = GameMap.loadFromFile(file, undoLimit);
+        var gameBoard = loadGameMap(file);
         return new TerminalSokobanGame(gameBoard);
     }
+
+
+    /**
+     * @param mapFile The file containing the game map.
+     * @return The parsed game map.
+     * @throws IOException When there is an issue loading the file.
+     */
+    public static GameMap loadGameMap(Path mapFile) throws IOException {
+        var fileContent = Files.readString(mapFile);
+        return GameMap.parse(fileContent);
+    }
+
 }

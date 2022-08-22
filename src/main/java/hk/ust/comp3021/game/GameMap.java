@@ -57,24 +57,22 @@ public class GameMap {
         this.maxHeight = map.keySet().stream().mapToInt(Position::y).max().orElse(0) + 1;
     }
 
-    public static GameMap loadFromFile(Path mapFile, int undoLimit) throws IOException {
-        var fileContent = Files.readString(mapFile);
-        return GameMap.parse(fileContent, undoLimit);
-    }
-
     /**
      * Parses the map from a string representation.
      *
-     * @param gameBoardText The string representation.
-     * @param undoLimit     The limit on the number of undo.
+     * @param mapText   The string representation.
      * @return The parsed GameMap object.
      */
-    public static GameMap parse(String gameBoardText, int undoLimit) {
+    public static GameMap parse(String mapText) {
         var players = new HashSet<Integer>();
         var map = new HashMap<Position, Entity>();
         var destinations = new HashSet<Position>();
         AtomicInteger lineNumber = new AtomicInteger();
-        gameBoardText.lines().forEachOrdered(line -> {
+        var firstLine = mapText.lines().findFirst();
+        if (firstLine.isEmpty())
+            throw new IllegalArgumentException("Invalid map file.");
+        var undoLimit = Integer.parseInt(firstLine.get());
+        mapText.lines().forEachOrdered(line -> {
             int x = 0;
             int y = lineNumber.getAndIncrement();
             for (char c : line.toCharArray()) {
@@ -104,7 +102,7 @@ public class GameMap {
         return map.get(position);
     }
 
-    public void putEntity(Position position, Entity entity){
+    public void putEntity(Position position, Entity entity) {
         throw new NotImplementedException();
     }
 
@@ -130,14 +128,6 @@ public class GameMap {
 
     // TODO validate map
 
-    /**
-     * Create a new game session.
-     *
-     * @return GameState
-     */
-    public GameState createGameSession() {
-        return new GameState(this);
-    }
 
     public int getMaxWidth() {
         return maxWidth;

@@ -35,7 +35,7 @@ public class GameState {
 
     private Transition currentTransition = new Transition();
 
-    GameState(@NotNull GameMap board) {
+    public GameState(@NotNull GameMap board) {
         this.entities = new HashMap<>();
         this.boardWidth = board.getMaxWidth();
         this.boardHeight = board.getMaxHeight();
