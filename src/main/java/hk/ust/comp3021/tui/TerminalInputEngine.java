@@ -3,6 +3,7 @@ package hk.ust.comp3021.tui;
 import hk.ust.comp3021.actions.*;
 import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.utils.ShouldNotReachException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.util.Scanner;
@@ -26,7 +27,7 @@ public class TerminalInputEngine implements InputEngine {
     }
 
     @Override
-    public Action fetchAction() {
+    public @NotNull Action fetchAction() {
         var inputLine = terminalScanner.nextLine();
         var moveRegex = Pattern.compile("^(?<action>[WASDwasdRrHJKLhjklUu])$");
         var moveMatcher = moveRegex.matcher(inputLine);

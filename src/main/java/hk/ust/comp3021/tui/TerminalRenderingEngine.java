@@ -7,6 +7,7 @@ import hk.ust.comp3021.entities.Wall;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.Position;
 import hk.ust.comp3021.game.RenderingEngine;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class TerminalRenderingEngine implements RenderingEngine {
     }
 
     @Override
-    public void render(GameState state) {
+    public void render(@NotNull GameState state) {
         var builder = new StringBuilder();
         var undo = state.getUndoQuota();
         var undoQuotaText = String.format("Undo Quota: %s\n", undo < 0 ? "unlimited" : String.valueOf(undo));
@@ -54,7 +55,7 @@ public class TerminalRenderingEngine implements RenderingEngine {
     }
 
     @Override
-    public void message(String string) {
-        outputSteam.println(string);
+    public void message(@NotNull String content) {
+        outputSteam.println(content);
     }
 }

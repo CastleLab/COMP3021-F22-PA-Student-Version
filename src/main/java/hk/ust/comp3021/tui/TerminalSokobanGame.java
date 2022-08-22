@@ -3,6 +3,7 @@ package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.actions.ActionResult;
 import hk.ust.comp3021.game.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A Sokoban game running in the terminal.
@@ -16,10 +17,10 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
     /**
      * Create a new instance of TerminalSokobanGame.
      *
-     * @param gameMap The game map.
+     * @param gameState The game state.
      */
-    public TerminalSokobanGame(GameMap gameMap) {
-        super(new GameState(gameMap));
+    public TerminalSokobanGame(@NotNull GameState gameState) {
+        super(gameState);
         this.inputEngine = new TerminalInputEngine(System.in);
         this.renderingEngine = new TerminalRenderingEngine(System.out);
     }

@@ -1,22 +1,25 @@
 package hk.ust.comp3021.actions;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * The result of an action.
  */
-public sealed class ActionResult {
+public abstract sealed class ActionResult {
 
     protected final Action action;
 
     /**
      * @param action The action.
      */
-    protected ActionResult(Action action) {
+    protected ActionResult(@NotNull Action action) {
         this.action = action;
     }
 
     /**
      * @return The action.
      */
+    @NotNull
     public Action getAction() {
         return action;
     }
@@ -29,7 +32,7 @@ public sealed class ActionResult {
         /**
          * @param action The action.
          */
-        public Success(Action action) {
+        public Success(@NotNull Action action) {
             super(action);
         }
     }
@@ -44,6 +47,7 @@ public sealed class ActionResult {
         /**
          * @return The reason for the failure.
          */
+        @NotNull
         public String getReason() {
             return reason;
         }
@@ -52,7 +56,7 @@ public sealed class ActionResult {
          * @param action The action.
          * @param reason The reason for the failure.
          */
-        public Failed(Action action, String reason) {
+        public Failed(@NotNull Action action, @NotNull String reason) {
             super(action);
             this.reason = reason;
         }

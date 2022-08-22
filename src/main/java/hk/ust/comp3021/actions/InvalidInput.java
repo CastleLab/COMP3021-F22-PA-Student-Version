@@ -1,5 +1,7 @@
 package hk.ust.comp3021.actions;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Denote an invalid input.
  */
@@ -10,7 +12,7 @@ public final class InvalidInput extends Action {
     /**
      * @param message The error message.
      */
-    public InvalidInput(int initiator, String message) {
+    public InvalidInput(int initiator, @NotNull String message) {
         super(initiator);
         this.message = message;
     }

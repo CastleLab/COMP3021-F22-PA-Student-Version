@@ -5,17 +5,19 @@ import hk.ust.comp3021.entities.Box;
 import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.entities.Wall;
+import hk.ust.comp3021.utils.ShouldNotReachException;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A base implementation of Sokoban Game.
  */
 public abstract class AbstractSokobanGame implements SokobanGame {
+    @NotNull
     protected final GameState state;
 
     private boolean isExitSpecified = false;
 
-    protected AbstractSokobanGame(GameState gameState) {
+    protected AbstractSokobanGame(@NotNull GameState gameState) {
         this.state = gameState;
     }
 
@@ -53,7 +55,8 @@ public abstract class AbstractSokobanGame implements SokobanGame {
      * @param move           One-step move. We assume every move has only one step.
      * @return The action result for the move.
      */
-    private ActionResult processOneStepMove(Position playerPosition, Move move) {
+    @NotNull
+    private ActionResult processOneStepMove(@NotNull Position playerPosition, @NotNull Move move) {
         var nextPlayerPos = move.nextPosition(playerPosition);
         var nextEntity = this.state.getEntity(nextPlayerPos);
         return switch (nextEntity) {
@@ -73,6 +76,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
                 this.state.checkpoint();
                 yield new ActionResult.Success(move);
             }
+            case null -> throw new ShouldNotReachException();
         };
     }
 }

@@ -57,7 +57,7 @@ public class GameState {
                 .findFirst().orElse(null);
     }
 
-    public @NotNull Entity getEntity(Position position) {
+    public @Nullable Entity getEntity(@NotNull Position position) {
         return this.entities.get(position);
     }
 
