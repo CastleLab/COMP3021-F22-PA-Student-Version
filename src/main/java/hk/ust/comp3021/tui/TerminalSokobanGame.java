@@ -2,7 +2,6 @@ package hk.ust.comp3021.tui;
 
 
 import hk.ust.comp3021.actions.ActionResult;
-import hk.ust.comp3021.actions.Exit;
 import hk.ust.comp3021.game.*;
 
 /**
@@ -16,6 +15,8 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     /**
      * Create a new instance of TerminalSokobanGame.
+     *
+     * @param gameMap The game map.
      */
     public TerminalSokobanGame(GameMap gameMap) {
         super(new GameState(gameMap));
@@ -25,15 +26,11 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     @Override
     public void run() {
-        System.out.println("Sokoban game is ready.");
+        renderingEngine.message("Sokoban game is ready.");
         renderingEngine.render(state);
         while (!shouldStop()) {
-            System.out.println(">>> ");
+            renderingEngine.message(">>> ");
             var action = inputEngine.fetchAction();
-            if (action instanceof Exit) {
-                System.out.println("Game exits.");
-                return;
-            }
             var result = processAction(action);
             if (result instanceof ActionResult.Failed r) {
                 renderingEngine.message(r.getReason());
@@ -41,12 +38,11 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
             }
             renderingEngine.render(state);
         }
+        renderingEngine.message("Game exits.");
         if (this.state.isWin()) {
             renderingEngine.message("You win.");
-        } else if (this.state.isDeadlock()) {
+        } else if (this.state.isStuck()) {
             renderingEngine.message("You lose.");
-        } else {
-            renderingEngine.message("Exit unexpectedly.");
         }
     }
 }

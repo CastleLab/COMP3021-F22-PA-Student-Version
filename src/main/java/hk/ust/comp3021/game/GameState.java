@@ -2,7 +2,6 @@ package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.actions.Move;
 import hk.ust.comp3021.entities.Box;
-import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Entity;
 import hk.ust.comp3021.entities.Player;
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +43,7 @@ public class GameState {
             for (int y = 0; y < boardHeight; y++) {
                 var pos = Position.of(x, y);
                 var entity = board.getEntity(pos);
-                if (!(entity instanceof Empty)) {
-                    this.entities.put(pos, entity);
-                }
+                this.entities.put(pos, entity);
             }
         }
         this.destinations = new HashSet<>(board.getDestinations());
@@ -60,7 +57,7 @@ public class GameState {
                 .findFirst().orElse(null);
     }
 
-    public @Nullable Entity getEntity(Position position) {
+    public @NotNull Entity getEntity(Position position) {
         return this.entities.get(position);
     }
 
@@ -87,9 +84,9 @@ public class GameState {
     /**
      * Returns true if none of the accessible boxes is movable.
      *
-     * @return
+     * @return Whether there is no possible moves of the game.
      */
-    public boolean isDeadlock() {
+    public boolean isStuck() {
         var expandQueue = new ArrayDeque<Position>();
         var visited = new HashSet<Position>();
         var moves = new Move[]{
@@ -123,8 +120,8 @@ public class GameState {
      * Move the entity from one position to another.
      * This method assumes the validity of this move is ensured.
      *
-     * @param from
-     * @param to
+     * @param from The position of the source location.
+     * @param to   The position of the destination location.
      */
     void move(Position from, Position to) {
         // move entity

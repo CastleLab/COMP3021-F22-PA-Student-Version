@@ -86,13 +86,13 @@ class GameMapTest {
                 #..a.#
                 ######
                 """;
-        assertThrows(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 
     @Test
     void testEmptyMap() {
         var invalidMap = "";
-        assertThrows(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 
     @Test
@@ -103,7 +103,7 @@ class GameMapTest {
                 #.#
                 ###
                 """;
-        assertThrows(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 
     @Test
@@ -118,12 +118,12 @@ class GameMapTest {
                 #..a.#
                 ######
                 """;
-        assertThrows(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 
     @Test
     void testNegativeUndoLimit() {
-        assertThrows(IllegalArgumentException.class, () -> GameMap.parse(rectangularMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(rectangularMap));
     }
 
     @Test
@@ -155,7 +155,13 @@ class GameMapTest {
                 #..b.#
                 ######
                 """;
-        assertThrows(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
+    }
+
+    @Test
+    void testParseMapWithoutUndoLimit() {
+        var invalidMap = String.join("\n", rectangularMap.lines().skip(1).toList());
+        assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 
     @Test

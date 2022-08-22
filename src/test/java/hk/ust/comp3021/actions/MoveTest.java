@@ -21,7 +21,7 @@ class MoveTest {
     void moveRight() {
         assertEquals(
                 Position.of(234, 233),
-                new Move.Left(-1).nextPosition(pos)
+                new Move.Right(-1).nextPosition(pos)
         );
     }
 
@@ -29,7 +29,7 @@ class MoveTest {
     void moveUp() {
         assertEquals(
                 Position.of(233, 232),
-                new Move.Left(-1).nextPosition(pos)
+                new Move.Up(-1).nextPosition(pos)
         );
     }
 
@@ -37,7 +37,7 @@ class MoveTest {
     void moveDown() {
         assertEquals(
                 Position.of(233, 234),
-                new Move.Left(-1).nextPosition(pos)
+                new Move.Down(-1).nextPosition(pos)
         );
     }
 }

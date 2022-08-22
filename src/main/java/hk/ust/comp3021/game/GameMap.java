@@ -5,9 +5,6 @@ import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -82,12 +79,12 @@ public class GameMap {
             int y = lineNumber.getAndIncrement();
             for (char c : line.toCharArray()) {
                 if (c == '#') { // walls
-                    map.put(new Position(x, y), new Wall());
+                    map.put(Position.of(x, y), new Wall());
                 } else if (c == '@') {  // destinations
                     destinations.add(new Position(x, y));
                 } else if (c >= 'a' && c <= 'z') { // lower case letters are boxes for each player (corresponding upper case letter)
                     var playerId = c - ('a' - 'A');
-                    map.put(new Position(x, y), new Box(playerId));
+                    map.put(Position.of(x, y), new Box(playerId));
                 } else if (Character.isUpperCase(c)) {
                     var playerId = (int) c;
                     if (players.contains(playerId)) {
@@ -95,6 +92,8 @@ public class GameMap {
                     }
                     players.add(playerId);
                     map.put(new Position(x, y), new Player(playerId));
+                } else if (c == '.') {
+                    map.put(Position.of(x, y), new Empty());
                 }
                 x++;
             }
