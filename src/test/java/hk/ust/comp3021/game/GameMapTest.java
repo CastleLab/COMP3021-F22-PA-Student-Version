@@ -1,9 +1,13 @@
 package hk.ust.comp3021.game;
 
+import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Empty;
+import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.entities.Wall;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +40,35 @@ class GameMapTest {
     void testGetDestinations() {
         var gameMap = GameMap.parse(rectangularMap);
         assertEquals(2, gameMap.getDestinations().size());
+        assertInstanceOf(Empty.class, gameMap.getEntity(Position.of(4, 1)));
+    }
+
+    @Test
+    void testWallParsing() {
+        var gameMap = GameMap.parse(rectangularMap);
+        assertInstanceOf(Wall.class, gameMap.getEntity(Position.of(0, 0)));
+    }
+
+    @Test
+    void testPlayerParsing() {
+        var gameMap = GameMap.parse(rectangularMap);
+        var player = assertInstanceOf(Player.class, gameMap.getEntity(Position.of(1, 1)));
+        assertNotNull(player);
+        assertEquals(0, player.getId());
+    }
+
+    @Test
+    void testBoxParsing() {
+        var gameMap = GameMap.parse(rectangularMap);
+        var box = assertInstanceOf(Box.class, gameMap.getEntity(Position.of(2, 4)));
+        assertNotNull(box);
+        assertEquals(0, box.getPlayerId());
+    }
+
+    @Test
+    void testEmptyCellParsing() {
+        var gameMap = GameMap.parse(rectangularMap);
+        assertInstanceOf(Empty.class, gameMap.getEntity(Position.of(2, 1)));
     }
 
     @Test
@@ -140,7 +173,11 @@ class GameMapTest {
                 """;
         var gameMap = GameMap.parse(twoPlayersMap);
         var playerIds = gameMap.getPlayerIds();
-        assertArrayEquals(new int[]{'A', 'B'}, playerIds);
+
+        var expectedIds = new HashSet<Integer>();
+        expectedIds.add(0);
+        expectedIds.add(1);
+        assertEquals(expectedIds, playerIds);
     }
 
     @Test

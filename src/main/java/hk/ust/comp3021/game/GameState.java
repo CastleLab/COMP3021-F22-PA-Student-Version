@@ -43,7 +43,8 @@ public class GameState {
             for (int y = 0; y < boardHeight; y++) {
                 var pos = Position.of(x, y);
                 var entity = board.getEntity(pos);
-                this.entities.put(pos, entity);
+                if (entity != null)
+                    this.entities.put(pos, entity);
             }
         }
         this.destinations = new HashSet<>(board.getDestinations());
@@ -59,10 +60,6 @@ public class GameState {
 
     public @Nullable Entity getEntity(@NotNull Position position) {
         return this.entities.get(position);
-    }
-
-    public @NotNull @Unmodifiable Map<Position, Entity> getEntities() {
-        return entities;
     }
 
     public @NotNull @Unmodifiable Set<Position> getDestinations() {

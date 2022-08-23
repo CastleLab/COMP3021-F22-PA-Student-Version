@@ -10,8 +10,6 @@ import hk.ust.comp3021.game.RenderingEngine;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * A rendering engine that prints to the terminal.
@@ -33,17 +31,13 @@ public class TerminalRenderingEngine implements RenderingEngine {
         var undo = state.getUndoQuota();
         var undoQuotaText = String.format("Undo Quota: %s\n", undo < 0 ? "unlimited" : String.valueOf(undo));
         builder.append(undoQuotaText);
-        var lines = state.getEntities().entrySet().stream()
-                .collect(Collectors.groupingBy(e -> e.getKey().y()));
         for (int y = 0; y <= state.getBoardHeight(); y++) {
-            var line = lines.get(y).stream()
-                    .collect(Collectors.toMap(e -> e.getKey().x(), Map.Entry::getValue));
             for (int x = 0; x <= state.getBoardWidth(); x++) {
-                var entity = line.get(x);
+                var entity = state.getEntity(Position.of(x, y));
                 var charToPrint = switch (entity) {
                     case Wall ignored -> '#';
-                    case Box b -> Character.toUpperCase(b.getPlayerId());
-                    case Player p -> (char) p.getId();
+                    case Box b -> (char) (b.getPlayerId() + 'a');
+                    case Player p -> (char) (p.getId() + 'A');
                     case Empty ignored -> state.getDestinations().contains(new Position(x, y)) ? '@' : '.';
                     case null -> ' ';
                 };

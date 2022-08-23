@@ -73,7 +73,7 @@ class AbstractSokobanGameTest {
         var gameState = spy(new GameState(testMap));
 
         var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down('A'));
+        var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Success);
         verify(gameState, times(1)).move(any(), any());
@@ -93,7 +93,7 @@ class AbstractSokobanGameTest {
         var gameState = spy(new GameState(testMap));
 
         var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down('A'));
+        var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Failed);
         verify(gameState, never()).move(any(), any());
@@ -113,7 +113,7 @@ class AbstractSokobanGameTest {
         var gameState = spy(new GameState(testMap));
 
         var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down('A'));
+        var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Failed);
         verify(gameState, never()).move(any(), any());
@@ -133,7 +133,7 @@ class AbstractSokobanGameTest {
         var gameState = spy(new GameState(testMap));
 
         var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down('A'));
+        var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Success);
         verify(gameState, times(2)).move(any(), any());
@@ -154,7 +154,7 @@ class AbstractSokobanGameTest {
         var gameState = spy(new GameState(testMap));
 
         var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down('A'));
+        var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Failed);
         verify(gameState, never()).move(any(), any());
@@ -175,7 +175,7 @@ class AbstractSokobanGameTest {
         var gameState = spy(new GameState(testMap));
 
         var game = new SokobanGameForTesting(gameState);
-        assertThrowsExactly(IllegalArgumentException.class, () -> game.feedActionForProcessing(new Move.Down('B')));
+        assertThrowsExactly(IllegalArgumentException.class, () -> game.feedActionForProcessing(new Move.Down(1)));
     }
 
     @Test

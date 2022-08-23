@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * A Sokoban game board.
@@ -20,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GameMap {
 
-    @Unmodifiable
     private final Map<Position, Entity> map;
 
     private final int maxWidth;
@@ -46,7 +46,7 @@ public class GameMap {
      * @param map
      * @param undoLimit
      */
-    private GameMap(HashMap<Position, Entity> map, Set<Position> destinations, int undoLimit) {
+    private GameMap(Map<Position, Entity> map, Set<Position> destinations, int undoLimit) {
         this.map = Collections.unmodifiableMap(map);
         this.destinations = Collections.unmodifiableSet(destinations);
         this.undoLimit = undoLimit;
@@ -82,11 +82,12 @@ public class GameMap {
                     map.put(Position.of(x, y), new Wall());
                 } else if (c == '@') {  // destinations
                     destinations.add(new Position(x, y));
-                } else if (c >= 'a' && c <= 'z') { // lower case letters are boxes for each player (corresponding upper case letter)
-                    var playerId = c - ('a' - 'A');
+                    map.put(Position.of(x, y), new Empty());
+                } else if (Character.isLowerCase(c)) { // lower case letters are boxes for each player (corresponding upper case letter)
+                    var playerId = Character.toUpperCase(c) - 'A';
                     map.put(Position.of(x, y), new Box(playerId));
                 } else if (Character.isUpperCase(c)) {
-                    var playerId = (int) c;
+                    var playerId = c - 'A';
                     if (players.contains(playerId)) {
                         throw new IllegalArgumentException("duplicate players detected in the map");
                     }
@@ -107,7 +108,11 @@ public class GameMap {
     }
 
     public void putEntity(Position position, Entity entity) {
-        throw new NotImplementedException();
+        this.map.put(position, entity);
+    }
+
+    public boolean isValid() {
+       throw new NotImplementedException();
     }
 
     public @Unmodifiable Set<Position> getDestinations() {
@@ -118,28 +123,14 @@ public class GameMap {
         return undoLimit;
     }
 
-    public @Unmodifiable int[] getPlayerIds() {
-        var idList = this.map.values().stream().filter(e -> e instanceof Player)
-                .map(p -> ((Player) p).getId())
-                .sorted()
-                .toList();
-        var ids = new int[idList.size()];
-        for (int i = 0; i < idList.size(); i++) {
-            ids[i] = idList.get(i);
-        }
-        return ids;
+    public Set<Integer> getPlayerIds() {
+        return this.map.values().stream()
+                .filter(it -> it instanceof Player)
+                .map(it -> ((Player) it).getId())
+                .collect(Collectors.toSet());
     }
 
     // TODO validate map
-
-    /**
-     * Create a new game session.
-     *
-     * @return GameState
-     */
-    public GameState createGameSession() {
-        return new GameState(this);
-    }
 
     public int getMaxWidth() {
         return maxWidth;
