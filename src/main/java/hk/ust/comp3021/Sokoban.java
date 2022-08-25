@@ -19,18 +19,9 @@ public class Sokoban {
             System.err.println("Map is not provided.");
             System.exit(1);
         }
-        var mapFile = args[0];
-        var undoLimit = 0;
-        if (args.length >= 2) {
-            try {
-                undoLimit = Integer.parseInt(args[1]);
-            } catch (NumberFormatException e) {
-                System.err.println("Failed to parse undo limit: " + e);
-                System.exit(1);
-            }
-        }
+        final var mapFile = args[0];
         try {
-            var game = SokobanGameFactory.createTUIGame(mapFile, undoLimit);
+            final var game = SokobanGameFactory.createTUIGame(mapFile);
             game.run();
         } catch (IOException e) {
             System.err.println("Failed to load game map: " + e);

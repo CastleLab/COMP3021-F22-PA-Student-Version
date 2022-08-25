@@ -16,7 +16,7 @@ class SokobanGameFactoryTest {
 
     @Test
     void testLoadFromFile() throws IOException {
-        var mapFile = tempDir.resolve("tempMap.map");
+        final var mapFile = tempDir.resolve("tempMap.map");
         String rectangularMap = """
                 233
                 ######
@@ -28,7 +28,7 @@ class SokobanGameFactoryTest {
                 ######
                 """;
         Files.writeString(mapFile, rectangularMap);
-        var gameMap = SokobanGameFactory.loadGameMap(mapFile);
+        final var gameMap = SokobanGameFactory.loadGameMap(mapFile);
         assertEquals(6, gameMap.getMaxWidth());
         assertEquals(7, gameMap.getMaxHeight());
         assertEquals(233, gameMap.getUndoLimit());

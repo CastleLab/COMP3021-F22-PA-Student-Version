@@ -33,11 +33,11 @@ public class TerminalInputEngine implements InputEngine {
 
     @Override
     public @NotNull Action fetchAction() {
-        var inputLine = terminalScanner.nextLine();
-        var moveMatcher = moveRegex.matcher(inputLine);
+        final var inputLine = terminalScanner.nextLine();
+        final var moveMatcher = moveRegex.matcher(inputLine);
         if (moveMatcher.find()) {
-            var moveCommand = moveMatcher.group("action").toUpperCase();
-            var playerId = switch (moveCommand) {
+            final var moveCommand = moveMatcher.group("action").toUpperCase();
+            final var playerId = switch (moveCommand) {
                 case "W", "A", "S", "D", "R" -> 0;
                 case "H", "J", "K", "L", "U" -> 1;
                 default -> throw new ShouldNotReachException();

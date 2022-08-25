@@ -22,7 +22,7 @@ public class SokobanGameFactory {
      *
      * @return The Sokoban game.
      */
-    public static SokobanGame createTUIGame(String mapFile, int undoLimit) throws IOException {
+    public static SokobanGame createTUIGame(String mapFile) throws IOException {
         Path file;
         if (!mapFile.endsWith(".map")) {
             // treat as built-in maps
@@ -36,7 +36,7 @@ public class SokobanGameFactory {
         } else {
             file = Path.of(mapFile);
         }
-        var gameMap = loadGameMap(file);
+        final var gameMap = loadGameMap(file);
         return new TerminalSokobanGame(
                 new GameState(gameMap),
                 new TerminalInputEngine(System.in),
@@ -51,7 +51,7 @@ public class SokobanGameFactory {
      * @throws IOException When there is an issue loading the file.
      */
     public static GameMap loadGameMap(Path mapFile) throws IOException {
-        var fileContent = Files.readString(mapFile);
+        final var fileContent = Files.readString(mapFile);
         return GameMap.parse(fileContent);
     }
 

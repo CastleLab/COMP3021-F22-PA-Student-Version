@@ -19,20 +19,20 @@ class TerminalInputEngineTest {
 
     @Test
     void testInvalidInput() {
-        var inputStream = fixValueStream("blah blah");
+        final var inputStream = fixValueStream("blah blah");
 
-        var inputEngine = new TerminalInputEngine(inputStream);
-        var action = inputEngine.fetchAction();
+        final var inputEngine = new TerminalInputEngine(inputStream);
+        final var action = inputEngine.fetchAction();
 
         assertTrue(action instanceof InvalidInput);
     }
 
     @Test
     void testExit() {
-        var inputStream = fixValueStream("exit");
+        final var inputStream = fixValueStream("exit");
 
-        var inputEngine = new TerminalInputEngine(inputStream);
-        var action = inputEngine.fetchAction();
+        final var inputEngine = new TerminalInputEngine(inputStream);
+        final var action = inputEngine.fetchAction();
 
         assertTrue(action instanceof Exit);
     }
@@ -40,10 +40,10 @@ class TerminalInputEngineTest {
     @ParameterizedTest
     @CsvSource({"R,0", "U,1"})
     void testUndo(String input, int playerId) {
-        var inputStream = fixValueStream(input);
+        final var inputStream = fixValueStream(input);
 
-        var inputEngine = new TerminalInputEngine(inputStream);
-        var action = inputEngine.fetchAction();
+        final var inputEngine = new TerminalInputEngine(inputStream);
+        final var action = inputEngine.fetchAction();
 
         assertTrue(action instanceof Undo);
         assertEquals(playerId, action.getInitiator());
@@ -61,17 +61,17 @@ class TerminalInputEngineTest {
             "L,Right,1",
     })
     void testMove(String input, String name, int playerId) {
-        var inputStream = fixValueStream(input);
+        final var inputStream = fixValueStream(input);
 
-        var inputEngine = new TerminalInputEngine(inputStream);
-        var action = inputEngine.fetchAction();
+        final var inputEngine = new TerminalInputEngine(inputStream);
+        final var action = inputEngine.fetchAction();
 
         assertEquals(name, action.getClass().getSimpleName());
         assertEquals(playerId, action.getInitiator());
     }
 
     private InputStream fixValueStream(String content) {
-        var bytes = content.getBytes(StandardCharsets.UTF_8);
+        final var bytes = content.getBytes(StandardCharsets.UTF_8);
         return new ByteArrayInputStream(bytes);
     }
 }

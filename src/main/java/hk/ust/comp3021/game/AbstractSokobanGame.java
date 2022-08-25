@@ -44,7 +44,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
                 yield new ActionResult.Success(action);
             }
             case Move move -> {
-                var currentPlayerPos = this.state.getPlayerPositionById(action.getInitiator());
+                final var currentPlayerPos = this.state.getPlayerPositionById(action.getInitiator());
                 if (currentPlayerPos == null) {
                     throw new IllegalArgumentException(PLAYER_NOT_FOUND);
                 }
@@ -60,8 +60,8 @@ public abstract class AbstractSokobanGame implements SokobanGame {
      */
     @NotNull
     private ActionResult processOneStepMove(@NotNull Position playerPosition, @NotNull Move move) {
-        var nextPlayerPos = move.nextPosition(playerPosition);
-        var nextEntity = this.state.getEntity(nextPlayerPos);
+        final var nextPlayerPos = move.nextPosition(playerPosition);
+        final var nextEntity = this.state.getEntity(nextPlayerPos);
         return switch (nextEntity) {
             case Empty ignored -> {
                 this.state.move(playerPosition, nextPlayerPos); // move if next place is empty
@@ -70,7 +70,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             case Wall ignored -> new ActionResult.Failed(move, "You hit a wall.");
             case Player ignored -> new ActionResult.Failed(move, "You hit another player.");
             case Box ignored -> {
-                var nextBoxPos = move.nextPosition(nextPlayerPos);
+                final var nextBoxPos = move.nextPosition(nextPlayerPos);
                 if (!(this.state.getEntity(nextBoxPos) instanceof Empty))
                     yield new ActionResult.Failed(move, "Failed to push the box.");
                 this.state.move(nextPlayerPos, nextBoxPos);

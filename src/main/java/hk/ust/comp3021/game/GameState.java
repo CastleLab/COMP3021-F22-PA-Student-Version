@@ -41,8 +41,8 @@ public class GameState {
 
         for (int x = 0; x < boardWidth; x++) {
             for (int y = 0; y < boardHeight; y++) {
-                var pos = Position.of(x, y);
-                var entity = board.getEntity(pos);
+                final var pos = Position.of(x, y);
+                final var entity = board.getEntity(pos);
                 if (entity != null)
                     this.entities.put(pos, entity);
             }
@@ -80,25 +80,25 @@ public class GameState {
      * @return Whether there is no possible moves of the game.
      */
     public boolean isStuck() {
-        var expandQueue = new ArrayDeque<Position>();
-        var visited = new HashSet<Position>();
-        var moves = new Move[]{
+        final var expandQueue = new ArrayDeque<Position>();
+        final var visited = new HashSet<Position>();
+        final var moves = new Move[]{
                 new Move.Down(-1), new Move.Right(-1), new Move.Left(-1), new Move.Up(-1)
         };
         this.entities.entrySet().stream()
                 .filter(e -> e.getValue() instanceof Player)
                 .forEach(e -> expandQueue.add(e.getKey()));
         while (!expandQueue.isEmpty()) {
-            var p = expandQueue.pop();
+            final var p = expandQueue.pop();
             if (visited.contains(p)) continue;
             visited.add(p);
             for (var m : moves) {
-                var adj = m.nextPosition(p);
-                var entity = this.entities.get(adj);
+                final var adj = m.nextPosition(p);
+                final var entity = this.entities.get(adj);
                 if (entity == null || entity instanceof Player) {
                     expandQueue.add(adj);
                 } else if (entity instanceof Box) {
-                    var e = this.entities.get(m.nextPosition(adj));
+                    final var e = this.entities.get(m.nextPosition(adj));
                     // FIXME there is a bug in this logic. Some corner deadlock cases of multiple players cannot be recognized.
                     if (e == null || e instanceof Player) {
                         return false; // the box is movable by the player.
@@ -118,7 +118,7 @@ public class GameState {
      */
     void move(Position from, Position to) {
         // move entity
-        var entity = this.entities.remove(from);
+        final var entity = this.entities.remove(from);
         if (entity == null) return;
         this.entities.put(to, entity);
 
@@ -141,7 +141,7 @@ public class GameState {
     private void applyTransition(Transition transition) {
         transition.moves.entrySet().stream()
                 .map(e -> {
-                    var entity = this.entities.remove(e.getKey());
+                    final var entity = this.entities.remove(e.getKey());
                     return Map.entry(e.getValue(), entity);
                 })
                 .toList()
@@ -154,12 +154,13 @@ public class GameState {
      * If the history is empty, undo quota is not decreased.
      */
     public void undo() {
-        var undoTransition = this.currentTransition.reverse();
+        final var undoTransition = this.currentTransition.reverse();
         this.applyTransition(undoTransition);
-        if (this.history.empty()) return;
-        undoTransition = this.history.pop().reverse();
-        this.applyTransition(undoTransition);
-        this.undoQuota--;
+        if (!this.history.empty()) {
+            final var historyTransaction = this.history.pop().reverse();
+            this.applyTransition(historyTransaction);
+            this.undoQuota--;
+        }
     }
 
     public int getBoardWidth() {
@@ -174,7 +175,7 @@ public class GameState {
         private final Map<Position, Position> moves;
 
         void add(Position from, Position to) {
-            var key = this.moves.entrySet().stream()
+            final var key = this.moves.entrySet().stream()
                     .filter(e -> e.getValue().equals(from))
                     .map(Map.Entry::getKey)
                     .findFirst().orElse(from);
@@ -190,7 +191,7 @@ public class GameState {
         }
 
         Transition reverse() {
-            var moves = this.moves.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+            final var moves = this.moves.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
             return new Transition(moves);
         }
 
@@ -200,7 +201,7 @@ public class GameState {
 
         @Override
         public String toString() {
-            var moves = this.moves.entrySet().stream()
+            final var moves = this.moves.entrySet().stream()
                     .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
                     .toList();
             return String.join(",", moves);

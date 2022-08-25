@@ -18,19 +18,24 @@ class GameStateTest {
 
     @Test
     void testMapCopying() {
-        var maxWidth = 2333;
-        var maxHeight = 2333;
-        var random = new Random();
-        var randomEntities = Stream.generate(() -> Position.of(random.nextInt(maxWidth), random.nextInt(maxHeight)))
+        final var maxWidth = 2333;
+        final var maxHeight = 2333;
+        final var random = new Random();
+        final var randomEntities = Stream.generate(() -> Position.of(random.nextInt(maxWidth), random.nextInt(maxHeight)))
                 .distinct()
                 .limit(100)
                 .collect(Collectors.toMap(Function.identity(), it -> generateEntity(it.x())));
 
-        var gameMap = new GameMap(maxWidth, maxHeight, Collections.singleton(randomEntities.keySet().stream().findFirst().get()), 233);
+        final var firstPos = randomEntities.keySet().stream().findFirst();
+        assertTrue(firstPos.isPresent());
+        final var gameMap = new GameMap(maxWidth, maxHeight, Collections.singleton(firstPos.get()), 233);
         randomEntities.forEach(gameMap::putEntity);
 
-        var gameState = new GameState(gameMap);
-        gameMap.putEntity(randomEntities.keySet().stream().findAny().get(), new Empty());
+        final var gameState = new GameState(gameMap);
+
+        final var randomPosition = randomEntities.keySet().stream().findAny();
+        assertTrue(randomPosition.isPresent());
+        gameMap.putEntity(randomPosition.get(), new Empty());
 
         randomEntities.forEach((p, e) -> assertEquals(e, gameState.getEntity(p)));
         assertEquals(233, gameState.getUndoQuota());
@@ -41,14 +46,14 @@ class GameStateTest {
 
     @Test
     void testWin() {
-        var testMap = GameMap.parse("""
+        final var testMap = GameMap.parse("""
                 233
                 ######
                 #A.a@#
                 #..a@#
                 ######
                 """);
-        var gameState = new GameState(testMap);
+        final var gameState = new GameState(testMap);
         gameState.move(Position.of(3, 1), Position.of(4, 1));
         gameState.move(Position.of(3, 2), Position.of(4, 2));
 
@@ -96,8 +101,8 @@ class GameStateTest {
                     """,
     })
     void testNonStuck(String mapText) {
-        var testMap = GameMap.parse(mapText);
-        var gameState = new GameState(testMap);
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = new GameState(testMap);
 
         assertFalse(gameState.isStuck());
     }
@@ -135,15 +140,15 @@ class GameStateTest {
                     """,
     })
     void testStuck(String mapText) {
-        var testMap = GameMap.parse(mapText);
-        var gameState = new GameState(testMap);
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = new GameState(testMap);
 
         assertTrue(gameState.isStuck());
     }
 
     @Test
     void testMove() {
-        var gameState = new GameState(GameMap.parse("""
+        final var gameState = new GameState(GameMap.parse("""
                 233
                 ######
                 #A.a@#
@@ -158,7 +163,7 @@ class GameStateTest {
 
     @Test
     void testPushBox() {
-        var gameState = new GameState(GameMap.parse("""
+        final var gameState = new GameState(GameMap.parse("""
                 233
                 ######
                 #.Aa@#
@@ -176,7 +181,7 @@ class GameStateTest {
 
     @Test
     void testMoveMoreThanOneStep() {
-        var gameState = new GameState(GameMap.parse("""
+        final var gameState = new GameState(GameMap.parse("""
                 233
                 ######
                 #A.a@#
@@ -190,7 +195,7 @@ class GameStateTest {
 
     @Test
     void testUndoWhenNeed() {
-        var gameState = new GameState(GameMap.parse("""
+        final var gameState = new GameState(GameMap.parse("""
                 233
                 ######
                 #.Aa@#
@@ -211,7 +216,7 @@ class GameStateTest {
 
     @Test
     void testUndoWhenNoNeed() {
-        var gameState = new GameState(GameMap.parse("""
+        final var gameState = new GameState(GameMap.parse("""
                 233
                 ######
                 #A.a@#

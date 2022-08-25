@@ -61,11 +61,11 @@ public class GameMap {
      * @return The parsed GameMap object.
      */
     public static GameMap parse(String mapText) {
-        var players = new HashSet<Integer>();
-        var map = new HashMap<Position, Entity>();
-        var destinations = new HashSet<Position>();
+        final var players = new HashSet<Integer>();
+        final var map = new HashMap<Position, Entity>();
+        final var destinations = new HashSet<Position>();
         AtomicInteger lineNumber = new AtomicInteger();
-        var firstLine = mapText.lines().findFirst();
+        final var firstLine = mapText.lines().findFirst();
         if (firstLine.isEmpty())
             throw new IllegalArgumentException("Invalid map file.");
         var undoLimit = 0;
@@ -84,10 +84,10 @@ public class GameMap {
                     destinations.add(new Position(x, y));
                     map.put(Position.of(x, y), new Empty());
                 } else if (Character.isLowerCase(c)) { // lower case letters are boxes for each player (corresponding upper case letter)
-                    var playerId = Character.toUpperCase(c) - 'A';
+                    final var playerId = Character.toUpperCase(c) - 'A';
                     map.put(Position.of(x, y), new Box(playerId));
                 } else if (Character.isUpperCase(c)) {
-                    var playerId = c - 'A';
+                    final var playerId = c - 'A';
                     if (players.contains(playerId)) {
                         throw new IllegalArgumentException("duplicate players detected in the map");
                     }

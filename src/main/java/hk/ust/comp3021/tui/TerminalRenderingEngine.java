@@ -27,11 +27,11 @@ public class TerminalRenderingEngine implements RenderingEngine {
 
     @Override
     public void render(@NotNull GameState state) {
-        var builder = new StringBuilder();
+        final var builder = new StringBuilder();
         for (int y = 0; y <= state.getBoardHeight(); y++) {
             for (int x = 0; x <= state.getBoardWidth(); x++) {
-                var entity = state.getEntity(Position.of(x, y));
-                var charToPrint = switch (entity) {
+                final var entity = state.getEntity(Position.of(x, y));
+                final var charToPrint = switch (entity) {
                     case Wall ignored -> '#';
                     case Box b -> (char) (b.getPlayerId() + 'a');
                     case Player p -> (char) (p.getId() + 'A');

@@ -26,55 +26,55 @@ class GameMapTest {
 
     @Test
     void testWidthForRectangularMap() {
-        var gameMap = GameMap.parse(rectangularMap);
+        final var gameMap = GameMap.parse(rectangularMap);
         assertEquals(6, gameMap.getMaxWidth());
     }
 
     @Test
     void testHeightForRectangularMap() {
-        var gameMap = GameMap.parse(rectangularMap);
+        final var gameMap = GameMap.parse(rectangularMap);
         assertEquals(7, gameMap.getMaxHeight());
     }
 
     @Test
     void testGetDestinations() {
-        var gameMap = GameMap.parse(rectangularMap);
+        final var gameMap = GameMap.parse(rectangularMap);
         assertEquals(2, gameMap.getDestinations().size());
         assertInstanceOf(Empty.class, gameMap.getEntity(Position.of(4, 1)));
     }
 
     @Test
     void testWallParsing() {
-        var gameMap = GameMap.parse(rectangularMap);
+        final var gameMap = GameMap.parse(rectangularMap);
         assertInstanceOf(Wall.class, gameMap.getEntity(Position.of(0, 0)));
     }
 
     @Test
     void testPlayerParsing() {
-        var gameMap = GameMap.parse(rectangularMap);
-        var player = assertInstanceOf(Player.class, gameMap.getEntity(Position.of(1, 1)));
+        final var gameMap = GameMap.parse(rectangularMap);
+        final var player = assertInstanceOf(Player.class, gameMap.getEntity(Position.of(1, 1)));
         assertNotNull(player);
         assertEquals(0, player.getId());
     }
 
     @Test
     void testBoxParsing() {
-        var gameMap = GameMap.parse(rectangularMap);
-        var box = assertInstanceOf(Box.class, gameMap.getEntity(Position.of(2, 4)));
+        final var gameMap = GameMap.parse(rectangularMap);
+        final var box = assertInstanceOf(Box.class, gameMap.getEntity(Position.of(2, 4)));
         assertNotNull(box);
         assertEquals(0, box.getPlayerId());
     }
 
     @Test
     void testEmptyCellParsing() {
-        var gameMap = GameMap.parse(rectangularMap);
+        final var gameMap = GameMap.parse(rectangularMap);
         assertInstanceOf(Empty.class, gameMap.getEntity(Position.of(2, 1)));
     }
 
     @Test
     void testGetEntity() {
-        var gameMap = GameMap.parse(rectangularMap);
-        var entity = gameMap.getEntity(Position.of(0, 0));
+        final var gameMap = GameMap.parse(rectangularMap);
+        final var entity = gameMap.getEntity(Position.of(0, 0));
         assertTrue(entity instanceof Wall);
     }
 
@@ -91,25 +91,25 @@ class GameMapTest {
 
     @Test
     void testWidthForNonRectangularMap() {
-        var gameMap = GameMap.parse(nonRectangularMap);
+        final var gameMap = GameMap.parse(nonRectangularMap);
         assertEquals(9, gameMap.getMaxWidth());
     }
 
     @Test
     void testHeightForNonRectangularMap() {
-        var gameMap = GameMap.parse(nonRectangularMap);
+        final var gameMap = GameMap.parse(nonRectangularMap);
         assertEquals(7, gameMap.getMaxHeight());
     }
 
     @Test
     void testUndoLimitParsing() {
-        var gameMap = GameMap.parse(rectangularMap);
+        final var gameMap = GameMap.parse(rectangularMap);
         assertEquals(233, gameMap.getUndoLimit());
     }
 
     @Test
     void testInsufficientDestinations() {
-        var invalidMap = """
+        final var invalidMap = """
                 233
                 ######
                 #A..@#
@@ -124,13 +124,13 @@ class GameMapTest {
 
     @Test
     void testEmptyMap() {
-        var invalidMap = "";
+        final var invalidMap = "";
         assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 
     @Test
     void testMapWithoutPlayer() {
-        var invalidMap = """
+        final var invalidMap = """
                 233
                 ###
                 #.#
@@ -141,7 +141,7 @@ class GameMapTest {
 
     @Test
     void testUnmatchedPlayersAndBoxes() {
-        var invalidMap = """
+        final var invalidMap = """
                 233
                 ######
                 #A..@#
@@ -161,7 +161,7 @@ class GameMapTest {
 
     @Test
     void testTwoPlayersMap() {
-        var twoPlayersMap = """
+        final var twoPlayersMap = """
                 233
                 ######
                 #A..@#
@@ -171,10 +171,10 @@ class GameMapTest {
                 #..b.#
                 ######
                 """;
-        var gameMap = GameMap.parse(twoPlayersMap);
-        var playerIds = gameMap.getPlayerIds();
+        final var gameMap = GameMap.parse(twoPlayersMap);
+        final var playerIds = gameMap.getPlayerIds();
 
-        var expectedIds = new HashSet<Integer>();
+        final var expectedIds = new HashSet<Integer>();
         expectedIds.add(0);
         expectedIds.add(1);
         assertEquals(expectedIds, playerIds);
@@ -182,7 +182,7 @@ class GameMapTest {
 
     @Test
     void testDuplicatedPlayers() {
-        var invalidMap = """
+        final var invalidMap = """
                 233
                 ######
                 #A..@#
@@ -197,7 +197,7 @@ class GameMapTest {
 
     @Test
     void testParseMapWithoutUndoLimit() {
-        var invalidMap = String.join("\n", rectangularMap.lines().skip(1).toList());
+        final var invalidMap = String.join("\n", rectangularMap.lines().skip(1).toList());
         assertThrowsExactly(IllegalArgumentException.class, () -> GameMap.parse(invalidMap));
     }
 

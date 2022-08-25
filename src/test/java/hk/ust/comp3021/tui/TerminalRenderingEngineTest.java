@@ -15,10 +15,10 @@ class TerminalRenderingEngineTest {
 
     @Test
     void testMessage() {
-        var stream = new CapturingStream();
-        var randomString = String.valueOf(this.hashCode());
+        final var stream = new CapturingStream();
+        final var randomString = String.valueOf(this.hashCode());
 
-        var renderingEngine = new TerminalRenderingEngine(stream);
+        final var renderingEngine = new TerminalRenderingEngine(stream);
         renderingEngine.message(randomString);
 
         assertEquals(randomString + System.lineSeparator(), stream.getContent());
@@ -36,16 +36,16 @@ class TerminalRenderingEngineTest {
                 #..a.####
                 ######
                 """;
-        var gameState = new GameState(GameMap.parse(testMap));
-        var stream = new CapturingStream();
+        final var gameState = new GameState(GameMap.parse(testMap));
+        final var stream = new CapturingStream();
 
-        var renderingEngine = new TerminalRenderingEngine(stream);
+        final var renderingEngine = new TerminalRenderingEngine(stream);
         renderingEngine.render(gameState);
 
-        var renderedContent = stream.getContent();
+        final var renderedContent = stream.getContent();
         assertEquals(8, renderedContent.lines().count());
         assertTrue(renderedContent.lines().allMatch(it -> it.length() >= 10 && it.length() <= 11)); // On Windows there may be \n\r
-        var lines = renderedContent.lines().toList();
+        final var lines = renderedContent.lines().toList();
         assertEquals('#', lines.get(0).charAt(0));
         assertEquals(' ', lines.get(0).charAt(8));
         assertEquals('a', lines.get(3).charAt(1));

@@ -34,12 +34,12 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
         renderingEngine.message(GAME_READY_MESSAGE);
         renderingEngine.render(state);
         while (!shouldStop()) {
-            var undoQuota = state.getUndoQuota();
-            var undoQuotaMessage = String.format(UNDO_QUOTA_TEMPLATE, undoQuota < 0 ? UNDO_QUOTA_UNLIMITED : String.valueOf(undoQuota));
+            final var undoQuota = state.getUndoQuota();
+            final var undoQuotaMessage = String.format(UNDO_QUOTA_TEMPLATE, undoQuota < 0 ? UNDO_QUOTA_UNLIMITED : String.valueOf(undoQuota));
             renderingEngine.message(undoQuotaMessage);
             renderingEngine.message(">>> ");
-            var action = inputEngine.fetchAction();
-            var result = processAction(action);
+            final var action = inputEngine.fetchAction();
+            final var result = processAction(action);
             if (result instanceof ActionResult.Failed r) {
                 renderingEngine.message(r.getReason());
             }

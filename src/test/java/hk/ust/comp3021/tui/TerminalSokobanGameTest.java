@@ -11,18 +11,18 @@ class TerminalSokobanGameTest {
 
     @Test
     void testGameLoop() {
-        var gameState = mock(GameState.class);
-        var inputEngine = mock(TerminalInputEngine.class);
-        var renderingEngine = mock(TerminalRenderingEngine.class);
+        final var gameState = mock(GameState.class);
+        final var inputEngine = mock(TerminalInputEngine.class);
+        final var renderingEngine = mock(TerminalRenderingEngine.class);
         when(gameState.isWin()).thenReturn(false);
         when(inputEngine.fetchAction())
                 .thenReturn(new InvalidInput(0, ""))
                 .thenReturn(new Exit(0));
 
-        var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
+        final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
         game.run();
 
-        var inOrder = inOrder(inputEngine, renderingEngine);
+        final var inOrder = inOrder(inputEngine, renderingEngine);
 
         // Before loop
         inOrder.verify(renderingEngine).render(eq(gameState));

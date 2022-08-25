@@ -12,11 +12,11 @@ class AbstractSokobanGameTest {
 
     @Test
     void testInvalidInput() {
-        var game = new SokobanGameForTesting(mock(GameState.class));
-        var message = String.valueOf(new Random().nextLong());
+        final var game = new SokobanGameForTesting(mock(GameState.class));
+        final var message = String.valueOf(new Random().nextLong());
 
-        var action = new InvalidInput(-1, message);
-        var result = game.feedActionForProcessing(action);
+        final var action = new InvalidInput(-1, message);
+        final var result = game.feedActionForProcessing(action);
 
         assertTrue(result instanceof ActionResult.Failed);
         assertEquals(message, ((ActionResult.Failed) result).getReason());
@@ -24,24 +24,24 @@ class AbstractSokobanGameTest {
 
     @Test
     void testExceedingUndoQuota() {
-        var gameState = mock(GameState.class);
+        final var gameState = mock(GameState.class);
         when(gameState.getPlayerPositionById(anyInt())).thenReturn(Position.of(0, 0));
         when(gameState.getUndoQuota()).thenReturn(0);
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Undo(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Undo(0));
 
         assertTrue(result instanceof ActionResult.Failed);
     }
 
     @Test
     void testUndoWithinQuota() {
-        var gameState = mock(GameState.class);
+        final var gameState = mock(GameState.class);
         when(gameState.getPlayerPositionById(anyInt())).thenReturn(Position.of(0, 0));
         when(gameState.getUndoQuota()).thenReturn(1);
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Undo(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Undo(0));
 
         verify(gameState, times(1)).undo();
         assertTrue(result instanceof ActionResult.Success);
@@ -49,10 +49,10 @@ class AbstractSokobanGameTest {
 
     @Test
     void testExit() {
-        var gameState = mock(GameState.class);
+        final var gameState = mock(GameState.class);
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Exit(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Exit(0));
 
         assertTrue(result instanceof ActionResult.Success);
         assertTrue(game.shouldStop());
@@ -68,11 +68,11 @@ class AbstractSokobanGameTest {
                 #a...#
                 ######
                 """;
-        var testMap = GameMap.parse(mapText);
-        var gameState = spy(new GameState(testMap));
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = spy(new GameState(testMap));
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Success);
         verify(gameState, times(1)).move(any(), any());
@@ -88,11 +88,11 @@ class AbstractSokobanGameTest {
                 #a...#
                 ######
                 """;
-        var testMap = GameMap.parse(mapText);
-        var gameState = spy(new GameState(testMap));
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = spy(new GameState(testMap));
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Failed);
         verify(gameState, never()).move(any(), any());
@@ -108,11 +108,11 @@ class AbstractSokobanGameTest {
                 #ab.@#
                 ######
                 """;
-        var testMap = GameMap.parse(mapText);
-        var gameState = spy(new GameState(testMap));
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = spy(new GameState(testMap));
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Failed);
         verify(gameState, never()).move(any(), any());
@@ -128,11 +128,11 @@ class AbstractSokobanGameTest {
                 #....#
                 ######
                 """;
-        var testMap = GameMap.parse(mapText);
-        var gameState = spy(new GameState(testMap));
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = spy(new GameState(testMap));
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Success);
         verify(gameState, times(2)).move(any(), any());
@@ -149,11 +149,11 @@ class AbstractSokobanGameTest {
                 ##...#
                 ######
                 """;
-        var testMap = GameMap.parse(mapText);
-        var gameState = spy(new GameState(testMap));
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = spy(new GameState(testMap));
 
-        var game = new SokobanGameForTesting(gameState);
-        var result = game.feedActionForProcessing(new Move.Down(0));
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Down(0));
 
         assertTrue(result instanceof ActionResult.Failed);
         verify(gameState, never()).move(any(), any());
@@ -170,28 +170,28 @@ class AbstractSokobanGameTest {
                 ##...#
                 ######
                 """;
-        var testMap = GameMap.parse(mapText);
-        var gameState = spy(new GameState(testMap));
+        final var testMap = GameMap.parse(mapText);
+        final var gameState = spy(new GameState(testMap));
 
-        var game = new SokobanGameForTesting(gameState);
+        final var game = new SokobanGameForTesting(gameState);
         assertThrowsExactly(IllegalArgumentException.class, () -> game.feedActionForProcessing(new Move.Down(1)));
     }
 
     @Test
     void testShouldStopWhenWin() {
-        var gameState = mock(GameState.class);
+        final var gameState = mock(GameState.class);
         when(gameState.isWin()).thenReturn(true);
 
-        var game = new SokobanGameForTesting(gameState);
+        final var game = new SokobanGameForTesting(gameState);
         assertTrue(game.shouldStop());
     }
 
     @Test
     void testShouldStopWhenStuck() {
-        var gameState = mock(GameState.class);
+        final var gameState = mock(GameState.class);
         when(gameState.isStuck()).thenReturn(true);
 
-        var game = new SokobanGameForTesting(gameState);
+        final var game = new SokobanGameForTesting(gameState);
         assertTrue(game.shouldStop());
     }
 
