@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameMapTest {
 
-    private final String rectangularMap = """
+    private static final String rectangularMap = """
             233
             ######
             #A..@#
@@ -78,7 +78,7 @@ class GameMapTest {
         assertTrue(entity instanceof Wall);
     }
 
-    private final String nonRectangularMap = """
+    private static final String nonRectangularMap = """
             233
             ######
             #A..@#

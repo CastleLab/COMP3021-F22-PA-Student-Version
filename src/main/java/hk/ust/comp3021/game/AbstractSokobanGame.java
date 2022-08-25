@@ -8,6 +8,9 @@ import hk.ust.comp3021.entities.Wall;
 import hk.ust.comp3021.utils.ShouldNotReachException;
 import org.jetbrains.annotations.NotNull;
 
+import static hk.ust.comp3021.utils.StringResources.PLAYER_NOT_FOUND;
+import static hk.ust.comp3021.utils.StringResources.UNDO_QUOTA_RUN_OUT;
+
 /**
  * A base implementation of Sokoban Game.
  */
@@ -33,7 +36,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
                     this.state.undo();
                     yield new ActionResult.Success(action);
                 } else {
-                    yield new ActionResult.Failed(action, "no more undo quota");
+                    yield new ActionResult.Failed(action, UNDO_QUOTA_RUN_OUT);
                 }
             }
             case Exit ignored -> {
@@ -43,7 +46,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             case Move move -> {
                 var currentPlayerPos = this.state.getPlayerPositionById(action.getInitiator());
                 if (currentPlayerPos == null) {
-                    throw new IllegalArgumentException("player does not exist");
+                    throw new IllegalArgumentException(PLAYER_NOT_FOUND);
                 }
                 yield this.processOneStepMove(currentPlayerPos, move);
             }

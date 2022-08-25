@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import static hk.ust.comp3021.utils.StringResources.EXIT_COMMAND_TEXT;
+import static hk.ust.comp3021.utils.StringResources.INVALID_INPUT_MESSAGE;
+
 /**
  * An input engine that fetches actions from terminal input.
  */
@@ -26,10 +29,11 @@ public class TerminalInputEngine implements InputEngine {
         this.terminalScanner = new Scanner(terminalStream);
     }
 
+    private static final Pattern moveRegex = Pattern.compile("^(?<action>[WASDwasdRrHJKLhjklUu])$");
+
     @Override
     public @NotNull Action fetchAction() {
         var inputLine = terminalScanner.nextLine();
-        var moveRegex = Pattern.compile("^(?<action>[WASDwasdRrHJKLhjklUu])$");
         var moveMatcher = moveRegex.matcher(inputLine);
         if (moveMatcher.find()) {
             var moveCommand = moveMatcher.group("action").toUpperCase();
@@ -46,10 +50,10 @@ public class TerminalInputEngine implements InputEngine {
                 case "R", "U" -> new Undo(playerId);
                 default -> throw new ShouldNotReachException();
             };
-        } else if (inputLine.equalsIgnoreCase("exit")) {
+        } else if (inputLine.equalsIgnoreCase(EXIT_COMMAND_TEXT)) {
             return new Exit(-1);
         } else {
-            return new InvalidInput(-1, "Invalid Input.");
+            return new InvalidInput(-1, INVALID_INPUT_MESSAGE);
         }
     }
 }

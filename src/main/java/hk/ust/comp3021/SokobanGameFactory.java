@@ -26,7 +26,7 @@ public class SokobanGameFactory {
         Path file;
         if (!mapFile.endsWith(".map")) {
             // treat as built-in maps
-            var resource = SokobanGameFactory.class.getClassLoader().getResource(mapFile + ".map");
+            final var resource = SokobanGameFactory.class.getClassLoader().getResource(mapFile + ".map");
             if (resource == null) throw new RuntimeException("No such built-in map: " + mapFile);
             try {
                 file = Path.of(resource.toURI());

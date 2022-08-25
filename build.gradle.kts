@@ -84,6 +84,10 @@ tasks {
         jvmArgs("--enable-preview")
     }
 
+    withType<Checkstyle> {
+
+    }
+
     create<ProGuardTask>("proguard") {
         injars(jar.flatMap { it.archiveFile })
         outjars(jar.flatMap { it.destinationDirectory.file("${project.name}-proguard.jar") })

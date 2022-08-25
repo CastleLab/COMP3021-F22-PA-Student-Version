@@ -7,6 +7,8 @@ import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.game.RenderingEngine;
 
+import static hk.ust.comp3021.utils.StringResources.*;
+
 /**
  * A Sokoban game running in the terminal.
  */
@@ -29,11 +31,11 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     @Override
     public void run() {
-        renderingEngine.message("Sokoban game is ready.");
+        renderingEngine.message(GAME_READY_MESSAGE);
         renderingEngine.render(state);
         while (!shouldStop()) {
             var undoQuota = state.getUndoQuota();
-            var undoQuotaMessage = String.format("Undo Quota: %s\n", undoQuota < 0 ? "unlimited" : String.valueOf(undoQuota));
+            var undoQuotaMessage = String.format(UNDO_QUOTA_TEMPLATE, undoQuota < 0 ? UNDO_QUOTA_UNLIMITED : String.valueOf(undoQuota));
             renderingEngine.message(undoQuotaMessage);
             renderingEngine.message(">>> ");
             var action = inputEngine.fetchAction();
@@ -43,11 +45,11 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
             }
             renderingEngine.render(state);
         }
-        renderingEngine.message("Game exits.");
+        renderingEngine.message(GAME_EXIT_MESSAGE);
         if (this.state.isWin()) {
-            renderingEngine.message("You win.");
+            renderingEngine.message(WIN_MESSAGE);
         } else if (this.state.isStuck()) {
-            renderingEngine.message("You lose.");
+            renderingEngine.message(LOSE_MESSAGE);
         }
     }
 }

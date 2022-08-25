@@ -1,6 +1,5 @@
 package hk.ust.comp3021;
 
-import hk.ust.comp3021.game.GameMap;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
