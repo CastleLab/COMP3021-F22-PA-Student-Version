@@ -23,10 +23,10 @@ class GameStateTest {
         var random = new Random();
         var randomEntities = Stream.generate(() -> Position.of(random.nextInt(maxWidth), random.nextInt(maxHeight)))
                 .distinct()
-                .limit(10)
+                .limit(100)
                 .collect(Collectors.toMap(Function.identity(), it -> generateEntity(it.x())));
 
-        var gameMap = new GameMap(maxWidth, maxHeight, Collections.emptySet(), 233);
+        var gameMap = new GameMap(maxWidth, maxHeight, Collections.singleton(randomEntities.keySet().stream().findFirst().get()), 233);
         randomEntities.forEach(gameMap::putEntity);
 
         var gameState = new GameState(gameMap);
@@ -36,6 +36,7 @@ class GameStateTest {
         assertEquals(233, gameState.getUndoQuota());
         assertEquals(2333, gameState.getBoardHeight());
         assertEquals(2333, gameState.getBoardWidth());
+        assertEquals(1, gameState.getDestinations().size());
     }
 
     @Test

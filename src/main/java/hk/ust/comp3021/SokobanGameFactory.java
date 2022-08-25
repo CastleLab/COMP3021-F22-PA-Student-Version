@@ -3,6 +3,8 @@ package hk.ust.comp3021;
 import hk.ust.comp3021.game.GameMap;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.SokobanGame;
+import hk.ust.comp3021.tui.TerminalInputEngine;
+import hk.ust.comp3021.tui.TerminalRenderingEngine;
 import hk.ust.comp3021.tui.TerminalSokobanGame;
 
 import java.io.IOException;
@@ -34,8 +36,12 @@ public class SokobanGameFactory {
         } else {
             file = Path.of(mapFile);
         }
-        var gameBoard = loadGameMap(file);
-        return new TerminalSokobanGame(new GameState(gameBoard));
+        var gameMap = loadGameMap(file);
+        return new TerminalSokobanGame(
+                new GameState(gameMap),
+                new TerminalInputEngine(System.in),
+                new TerminalRenderingEngine(System.out)
+        );
     }
 
 

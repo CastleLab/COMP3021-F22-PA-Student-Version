@@ -47,7 +47,7 @@ public class GameState {
                     this.entities.put(pos, entity);
             }
         }
-        this.destinations = new HashSet<>(board.getDestinations());
+        this.destinations = board.getDestinations();
         undoQuota = board.getUndoLimit();
     }
 
@@ -68,10 +68,6 @@ public class GameState {
 
     public int getUndoQuota() {
         return undoQuota;
-    }
-
-    public Stack<Transition> getHistory() {
-        return history;
     }
 
     public boolean isWin() {

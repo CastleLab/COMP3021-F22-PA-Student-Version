@@ -35,7 +35,7 @@ public class GameMap {
     public GameMap(int maxWidth, int maxHeight, Set<Position> destinations, int undoLimit) {
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
-        this.destinations = destinations;
+        this.destinations = Collections.unmodifiableSet(destinations);
         this.undoLimit = undoLimit;
         this.map = new HashMap<>();
     }

@@ -28,9 +28,6 @@ public class TerminalRenderingEngine implements RenderingEngine {
     @Override
     public void render(@NotNull GameState state) {
         var builder = new StringBuilder();
-        var undo = state.getUndoQuota();
-        var undoQuotaText = String.format("Undo Quota: %s\n", undo < 0 ? "unlimited" : String.valueOf(undo));
-        builder.append(undoQuotaText);
         for (int y = 0; y <= state.getBoardHeight(); y++) {
             for (int x = 0; x <= state.getBoardWidth(); x++) {
                 var entity = state.getEntity(Position.of(x, y));
@@ -45,7 +42,7 @@ public class TerminalRenderingEngine implements RenderingEngine {
             }
             builder.append('\n');
         }
-        outputSteam.println(builder.toString());
+        outputSteam.print(builder);
     }
 
     @Override
