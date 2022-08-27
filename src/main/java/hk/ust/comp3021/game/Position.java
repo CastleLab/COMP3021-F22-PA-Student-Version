@@ -1,7 +1,7 @@
 package hk.ust.comp3021.game;
 
 /**
- * Denotes a position on a game board.
+ * Denotes a position on a game map.
  * The original point is at top-left corner.
  * The coordinates start from 0;
  *

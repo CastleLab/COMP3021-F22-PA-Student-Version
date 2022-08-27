@@ -10,7 +10,8 @@ public final class InvalidInput extends Action {
     private final String message;
 
     /**
-     * @param message The error message.
+     * @param initiator The id of the player who give the invalid input
+     * @param message   The error message.
      */
     public InvalidInput(int initiator, @NotNull String message) {
         super(initiator);

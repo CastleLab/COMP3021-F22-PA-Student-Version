@@ -25,6 +25,9 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
      */
     public static final class Down extends Move {
 
+        /**
+         * @param initiator The id of the player who give the invalid input.
+         */
         public Down(int initiator) {
             super(initiator);
         }
@@ -40,6 +43,9 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
      * The action of moving left.
      */
     public static final class Left extends Move {
+        /**
+         * @param initiator The id of the player who give the invalid input.
+         */
         public Left(int initiator) {
             super(initiator);
         }
@@ -55,6 +61,9 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
      * The action of mocking right.
      */
     public static final class Right extends Move {
+        /**
+         * @param initiator The id of the player who give the invalid input.
+         */
         public Right(int initiator) {
             super(initiator);
         }
@@ -70,6 +79,9 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
      * The action of moving up.
      */
     public static final class Up extends Move {
+        /**
+         * @param initiator The id of the player who give the invalid input.
+         */
         public Up(int initiator) {
             super(initiator);
         }

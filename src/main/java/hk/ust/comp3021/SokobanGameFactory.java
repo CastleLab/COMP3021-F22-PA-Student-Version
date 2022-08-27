@@ -20,7 +20,9 @@ public class SokobanGameFactory {
     /**
      * Create a TUI version of the Sokoban game.
      *
+     * @param mapFile map file.
      * @return The Sokoban game.
+     * @throws IOException if mapFile cannot be load
      */
     public static SokobanGame createTUIGame(String mapFile) throws IOException {
         Path file;
@@ -38,9 +40,9 @@ public class SokobanGameFactory {
         }
         final var gameMap = loadGameMap(file);
         return new TerminalSokobanGame(
-                new GameState(gameMap),
-                new TerminalInputEngine(System.in),
-                new TerminalRenderingEngine(System.out)
+            new GameState(gameMap),
+            new TerminalInputEngine(System.in),
+            new TerminalRenderingEngine(System.out)
         );
     }
 

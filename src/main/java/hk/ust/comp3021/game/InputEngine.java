@@ -10,6 +10,8 @@ public interface InputEngine {
 
     /**
      * Fetches an unprocessed action performed by the players.
+     *
+     * @return the action to process.
      */
     @NotNull
     Action fetchAction();

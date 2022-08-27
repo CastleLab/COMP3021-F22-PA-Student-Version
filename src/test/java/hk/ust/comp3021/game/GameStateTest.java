@@ -1,12 +1,14 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.entities.*;
+import hk.ust.comp3021.utils.Helper;
 import hk.ust.comp3021.utils.ShouldNotReachException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.platform.commons.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,9 +24,9 @@ class GameStateTest {
         final var maxHeight = 2333;
         final var random = new Random();
         final var randomEntities = Stream.generate(() -> Position.of(random.nextInt(maxWidth), random.nextInt(maxHeight)))
-                .distinct()
-                .limit(100)
-                .collect(Collectors.toMap(Function.identity(), it -> generateEntity(it.x())));
+            .distinct()
+            .limit(100)
+            .collect(Collectors.toMap(Function.identity(), it -> generateEntity(it.x())));
 
         final var firstPos = randomEntities.keySet().stream().findFirst();
         assertTrue(firstPos.isPresent());
@@ -38,21 +40,35 @@ class GameStateTest {
         gameMap.putEntity(randomPosition.get(), new Empty());
 
         randomEntities.forEach((p, e) -> assertEquals(e, gameState.getEntity(p)));
-        assertEquals(233, gameState.getUndoQuota());
-        assertEquals(2333, gameState.getBoardHeight());
-        assertEquals(2333, gameState.getBoardWidth());
+        assertEquals(233, gameState.getUndoQuota().orElse(null));
+        assertEquals(2333, gameState.getMapMaxHeight());
+        assertEquals(2333, gameState.getMapMaxWidth());
         assertEquals(1, gameState.getDestinations().size());
     }
 
     @Test
+    void testAllPlayerIds() {
+         final var testMap = Helper.parseGameMap("""
+            233
+            ######
+            #APp@#
+            #xXa@@#
+            ######
+            """);
+        final var gameState = new GameState(testMap);
+
+        assertEquals(new HashSet<>(Arrays.asList(Position.of(1, 1), Position.of(2, 1), Position.of(2, 2))), gameState.getAllPlayerPositions());
+    }
+
+    @Test
     void testWin() {
-        final var testMap = GameMap.parse("""
-                233
-                ######
-                #A.a@#
-                #..a@#
-                ######
-                """);
+        final var testMap = Helper.parseGameMap("""
+            233
+            ######
+            #A.a@#
+            #..a@#
+            ######
+            """);
         final var gameState = new GameState(testMap);
         gameState.move(Position.of(3, 1), Position.of(4, 1));
         gameState.move(Position.of(3, 2), Position.of(4, 2));
@@ -60,101 +76,15 @@ class GameStateTest {
         assertTrue(gameState.isWin());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            """
-                    233
-                    ######
-                    #A.a@#
-                    #..a@#
-                    ######
-                    """,
-            """
-                    233
-                    ######
-                    #A.a@#
-                    #B.b@#
-                    ######
-                    """,
-            """
-                    233
-                    ######
-                    #A.a@#
-                    ######
-                    #B.b@#
-                    ######
-                    """,
-            """
-                    233
-                    ######
-                    #B.a@#
-                    ##.###
-                    #A.b@#
-                    ######
-                    """,
-            """
-                    233
-                    #####
-                    #AaB#
-                    #.@.#
-                    #####
-                    """,
-    })
-    void testNonStuck(String mapText) {
-        final var testMap = GameMap.parse(mapText);
-        final var gameState = new GameState(testMap);
-
-        assertFalse(gameState.isStuck());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            """
-                    233
-                    #####
-                    #A.@#
-                    #..a#
-                    #####
-                    """,
-            """
-                    233
-                    ######
-                    #B.a@#
-                    ######
-                    #A.b@#
-                    ######
-                    """,
-            """
-                    233
-                    #####
-                    #A@@#
-                    #.aa#
-                    #####
-                    """,
-            """
-                    233
-                    #####
-                    #AaB#
-                    #.@b#
-                    #####
-                    """,
-    })
-    void testStuck(String mapText) {
-        final var testMap = GameMap.parse(mapText);
-        final var gameState = new GameState(testMap);
-
-        assertTrue(gameState.isStuck());
-    }
-
     @Test
     void testMove() {
-        final var gameState = new GameState(GameMap.parse("""
-                233
-                ######
-                #A.a@#
-                #..a@#
-                ######
-                """
+        final var gameState = new GameState(Helper.parseGameMap("""
+            233
+            ######
+            #A.a@#
+            #..a@#
+            ######
+            """
         ));
 
         gameState.move(Position.of(1, 1), Position.of(2, 1));
@@ -163,13 +93,13 @@ class GameStateTest {
 
     @Test
     void testPushBox() {
-        final var gameState = new GameState(GameMap.parse("""
-                233
-                ######
-                #.Aa@#
-                #..a@#
-                ######
-                """
+        final var gameState = new GameState(Helper.parseGameMap("""
+            233
+            ######
+            #.Aa@#
+            #..a@#
+            ######
+            """
         ));
 
         gameState.move(Position.of(3, 1), Position.of(4, 1));
@@ -180,55 +110,83 @@ class GameStateTest {
     }
 
     @Test
-    void testMoveMoreThanOneStep() {
-        final var gameState = new GameState(GameMap.parse("""
-                233
-                ######
-                #A.a@#
-                #..a@#
-                ######
-                """
+    void testGetUndoLimit() {
+        final var gameState = new GameState(Helper.parseGameMap("""
+            233
+            ######
+            #.Aa@#
+            #..a@#
+            ######
+            """
         ));
-
-        assertThrowsExactly(IllegalArgumentException.class, () -> gameState.move(Position.of(1, 1), Position.of(2, 2)));
+        assertEquals(233, gameState.getUndoQuota().orElse(null));
     }
 
     @Test
-    void testUndoWhenNeed() {
-        final var gameState = new GameState(GameMap.parse("""
-                233
-                ######
-                #.Aa@#
-                #..a@#
-                ######
-                """
+    void testGetUndoUnlimited() {
+        final var gameState = new GameState(Helper.parseGameMap("""
+            -1
+            ######
+            #.Aa@#
+            #..a@#
+            ######
+            """
+        ));
+        assertTrue(gameState.getUndoQuota().isEmpty());
+    }
+
+    @Test
+    void testUndoWhenThereIsCheckpoint() {
+        final var gameState = new GameState(Helper.parseGameMap("""
+            233
+            ######
+            #.Aa@#
+            #..a@#
+            ######
+            """
         ));
         gameState.move(Position.of(3, 1), Position.of(4, 1));
         gameState.move(Position.of(2, 1), Position.of(3, 1));
+        gameState.checkpoint();
 
         gameState.undo();
         assertEquals(Position.of(2, 1), gameState.getPlayerPositionById(0));
         assertInstanceOf(Box.class, gameState.getEntity(Position.of(3, 1)));
         assertInstanceOf(Empty.class, gameState.getEntity(Position.of(4, 1)));
 
-        assertEquals(232, gameState.getUndoQuota());
+        assertEquals(232, gameState.getUndoQuota().orElse(null));
     }
 
     @Test
-    void testUndoWhenNoNeed() {
-        final var gameState = new GameState(GameMap.parse("""
-                233
-                ######
-                #A.a@#
-                #..a@#
-                ######
-                """
+    void testUndoWhenThereIsMoveButNoCheckpoint() {
+        final var gameState = new GameState(Helper.parseGameMap("""
+            233
+            ######
+            #A.a@#
+            #..a@#
+            ######
+            """
         ));
         gameState.move(Position.of(1, 1), Position.of(2, 1));
 
         gameState.undo();
 
-        assertEquals(233, gameState.getUndoQuota());
+        assertEquals(233, gameState.getUndoQuota().orElse(null));
+    }
+
+    @Test
+    void testUndoWhenThereIsNoMove() {
+        final var gameState = new GameState(Helper.parseGameMap("""
+            233
+            ######
+            #A.a@#
+            #..a@#
+            ######
+            """
+        ));
+        gameState.undo();
+
+        assertEquals(233, gameState.getUndoQuota().orElse(null));
     }
 
     private Entity generateEntity(int key) {

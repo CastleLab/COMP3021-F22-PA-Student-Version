@@ -40,6 +40,10 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
+checkstyle {
+    toolVersion = "10.3.2";
+}
+
 tasks {
     withType<JavaCompile> {
         options.compilerArgs = listOf("--enable-preview")

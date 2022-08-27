@@ -6,10 +6,20 @@ package hk.ust.comp3021.entities;
 public final class Box extends Entity {
     private final int playerId;
 
+    /**
+     * Create a Box entity.
+     *
+     * @param playerId the id of the player that can move this box.
+     */
     public Box(int playerId) {
         this.playerId = playerId;
     }
 
+    /**
+     * Get the id of the player that is allowd to move this box.
+     *
+     * @return player id.
+     */
     public int getPlayerId() {
         return playerId;
     }

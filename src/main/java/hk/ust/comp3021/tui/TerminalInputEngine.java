@@ -29,12 +29,17 @@ public class TerminalInputEngine implements InputEngine {
         this.terminalScanner = new Scanner(terminalStream);
     }
 
-    private static final Pattern moveRegex = Pattern.compile("^(?<action>[WASDwasdRrHJKLhjklUu])$");
+    private static final Pattern MOVE_REGEX = Pattern.compile("^(?<action>[WASDwasdRrHJKLhjklUu])$");
 
+    /**
+     * Fetch an action from user in terminal to process.
+     *
+     * @return the user action.
+     */
     @Override
     public @NotNull Action fetchAction() {
         final var inputLine = terminalScanner.nextLine();
-        final var moveMatcher = moveRegex.matcher(inputLine);
+        final var moveMatcher = MOVE_REGEX.matcher(inputLine);
         if (moveMatcher.find()) {
             final var moveCommand = moveMatcher.group("action").toUpperCase();
             final var playerId = switch (moveCommand) {

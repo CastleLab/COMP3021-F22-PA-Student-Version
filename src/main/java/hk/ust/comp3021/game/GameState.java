@@ -1,7 +1,7 @@
 package hk.ust.comp3021.game;
 
-import hk.ust.comp3021.actions.Move;
 import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Entity;
 import hk.ust.comp3021.entities.Player;
 import org.jetbrains.annotations.NotNull;
@@ -13,10 +13,15 @@ import java.util.stream.Collectors;
 
 /**
  * The state of the Sokoban Game.
+ * Each game state represents an ongoing game.
+ * As the game goes, the game state changes while players are moving while the original game map stays the unmodified.
+ * <b>The game state should not modify the original game map.</b>
+ * <p>
  * GameState consists of things changing as the game goes, such as:
- * - Current locations of all crates.
- * - A move history.
- * - Current location of player.
+ * <li>Current locations of all crates.</li>
+ * <li>A move history.</li>
+ * <li>Current location of player.</li>
+ * <li>Undo quota left.</li>
  */
 public class GameState {
 
@@ -34,99 +39,125 @@ public class GameState {
 
     private Transition currentTransition = new Transition();
 
-    public GameState(@NotNull GameMap board) {
+    /**
+     * Create a running game state from a game map.
+     *
+     * @param map the game map from which to create this game state.
+     */
+    public GameState(@NotNull GameMap map) {
         this.entities = new HashMap<>();
-        this.boardWidth = board.getMaxWidth();
-        this.boardHeight = board.getMaxHeight();
+        this.boardWidth = map.getMaxWidth();
+        this.boardHeight = map.getMaxHeight();
 
         for (int x = 0; x < boardWidth; x++) {
             for (int y = 0; y < boardHeight; y++) {
                 final var pos = Position.of(x, y);
-                final var entity = board.getEntity(pos);
+                final var entity = map.getEntity(pos);
                 if (entity != null)
                     this.entities.put(pos, entity);
             }
         }
-        this.destinations = board.getDestinations();
-        undoQuota = board.getUndoLimit();
+        this.destinations = map.getDestinations();
+        undoQuota = map.getUndoLimit().orElse(-1);
     }
 
+    /**
+     * Get the current position of the player with the given id.
+     *
+     * @param id player id.
+     * @return the current position of the player.
+     */
     public @Nullable Position getPlayerPositionById(int id) {
         return this.entities.entrySet().stream()
-                .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
-                .map(Map.Entry::getKey)
-                .findFirst().orElse(null);
+            .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
+            .map(Map.Entry::getKey)
+            .findFirst().orElse(null);
     }
 
+    /**
+     * Get current positions of all players in the game map.
+     *
+     * @return a set of positions of all players.
+     */
+    public @NotNull Set<Position> getAllPlayerPositions() {
+        return this.entities.entrySet().stream()
+            .filter(e -> e.getValue() instanceof Player)
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get the entity that is currently at the given position.
+     *
+     * @param position the position of the entity.
+     * @return the entity object.
+     */
     public @Nullable Entity getEntity(@NotNull Position position) {
         return this.entities.get(position);
     }
 
+    /**
+     * Get all box destination positions as a set in the game map.
+     * This should be the same as that in {@link GameMap} class.
+     *
+     * @return a set of positions.
+     */
     public @NotNull @Unmodifiable Set<Position> getDestinations() {
         return destinations;
     }
 
-    public int getUndoQuota() {
-        return undoQuota;
+    /**
+     * Get the undo quota currently left, i.e., the maximum number of undo actions that can be performed from now on.
+     * If undo is unlimited,
+     *
+     * @return  the undo quota left (Using {@link Optional#of(Object)} if the game has an undo limit;
+     *         {@link Optional#empty()} if the game has unlimited undo.
+     */
+    public Optional<Integer> getUndoQuota() {
+        if (this.undoQuota < 0) {
+            return Optional.empty();
+        } else {
+            return Optional.of(this.undoQuota);
+        }
     }
 
+    /**
+     * Check whether the game wins or not.
+     * The game wins only when all box destinations have been occupied by boxes.
+     *
+     * @return true is the game wins.
+     */
     public boolean isWin() {
         return this.destinations.stream().allMatch(p -> this.entities.get(p) instanceof Box);
     }
 
     /**
-     * Returns true if none of the accessible boxes is movable.
-     *
-     * @return Whether there is no possible moves of the game.
-     */
-    public boolean isStuck() {
-        final var expandQueue = new ArrayDeque<Position>();
-        final var visited = new HashSet<Position>();
-        final var moves = new Move[]{
-                new Move.Down(-1), new Move.Right(-1), new Move.Left(-1), new Move.Up(-1)
-        };
-        this.entities.entrySet().stream()
-                .filter(e -> e.getValue() instanceof Player)
-                .forEach(e -> expandQueue.add(e.getKey()));
-        while (!expandQueue.isEmpty()) {
-            final var p = expandQueue.pop();
-            if (visited.contains(p)) continue;
-            visited.add(p);
-            for (var m : moves) {
-                final var adj = m.nextPosition(p);
-                final var entity = this.entities.get(adj);
-                if (entity == null || entity instanceof Player) {
-                    expandQueue.add(adj);
-                } else if (entity instanceof Box) {
-                    final var e = this.entities.get(m.nextPosition(adj));
-                    // FIXME there is a bug in this logic. Some corner deadlock cases of multiple players cannot be recognized.
-                    if (e == null || e instanceof Player) {
-                        return false; // the box is movable by the player.
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Move the entity from one position to another.
      * This method assumes the validity of this move is ensured.
+     * <b>The validity of the move of the entity in one position to another need not to check.</b>
      *
-     * @param from The position of the source location.
-     * @param to   The position of the destination location.
+     * @param from The current position of the entity to move.
+     * @param to   The position to move the entity to.
      */
-    void move(Position from, Position to) {
+    public void move(Position from, Position to) {
         // move entity
         final var entity = this.entities.remove(from);
-        if (entity == null) return;
+        this.entities.put(from, new Empty());
         this.entities.put(to, entity);
 
         // append to history
         this.currentTransition.add(from, to);
     }
 
-    void checkpoint() {
+    /**
+     * Record a checkpoint of the game state, including:
+     * <li>All current positions of entities in the game map.</li>
+     * <li>Current undo quota</li>
+     * <p>
+     * Checkpoint is used in {@link GameState#undo()}.
+     * Every undo actions reverts the game state to the last checkpoint.
+     */
+    public void checkpoint() {
         this.history.push(this.currentTransition);
         this.currentTransition = new Transition();
     }
@@ -136,22 +167,25 @@ public class GameState {
      * History is not touched in this method.
      * Callers should maintain history themselves.
      *
-     * @param transition
+     * @param transition the transition to apply.
      */
     private void applyTransition(Transition transition) {
         transition.moves.entrySet().stream()
-                .map(e -> {
-                    final var entity = this.entities.remove(e.getKey());
-                    return Map.entry(e.getValue(), entity);
-                })
-                .toList()
-                .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
+            .map(e -> {
+                final var entity = this.entities.remove(e.getKey());
+                this.entities.put(e.getKey(), new Empty());
+                return Map.entry(e.getValue(), entity);
+            })
+            .toList()
+            .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
     }
 
     /**
-     * Revert to the last checkpoint in history.
-     * This method assumes there is still undo quota left.
-     * If the history is empty, undo quota is not decreased.
+     * Revert the game state to the last checkpoint in history.
+     * This method assumes there is still undo quota left, and decreases the undo quota by one.
+     * <p>
+     * If there is no checkpoint recorded, i.e., before moving any box when the game starts,
+     * revert to the initial game state.
      */
     public void undo() {
         final var undoTransition = this.currentTransition.reverse();
@@ -163,47 +197,55 @@ public class GameState {
         }
     }
 
-    public int getBoardWidth() {
+    /**
+     * Get the maximum width of the game map.
+     * This should be the same as that in {@link GameMap} class.
+     *
+     * @return maximum width.
+     */
+    public int getMapMaxWidth() {
         return boardWidth;
     }
 
-    public int getBoardHeight() {
+    /**
+     * Get the maximum height of the game map.
+     * This should be the same as that in {@link GameMap} class.
+     *
+     * @return maximum height.
+     */
+    public int getMapMaxHeight() {
         return boardHeight;
     }
 
-    static class Transition {
+    private static class Transition {
         private final Map<Position, Position> moves;
 
-        void add(Position from, Position to) {
+        private void add(Position from, Position to) {
             final var key = this.moves.entrySet().stream()
-                    .filter(e -> e.getValue().equals(from))
-                    .map(Map.Entry::getKey)
-                    .findFirst().orElse(from);
+                .filter(e -> e.getValue().equals(from))
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(from);
             this.moves.put(key, to);
         }
 
-        Transition(Map<Position, Position> moves) {
+        private Transition(Map<Position, Position> moves) {
             this.moves = moves;
         }
 
-        Transition() {
+        private Transition() {
             this.moves = new HashMap<>();
         }
 
-        Transition reverse() {
+        private Transition reverse() {
             final var moves = this.moves.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
             return new Transition(moves);
-        }
-
-        boolean empty() {
-            return this.moves.size() == 0;
         }
 
         @Override
         public String toString() {
             final var moves = this.moves.entrySet().stream()
-                    .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
-                    .toList();
+                .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
+                .toList();
             return String.join(",", moves);
         }
     }

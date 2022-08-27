@@ -20,11 +20,19 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     /**
      * Create a new instance of TerminalSokobanGame.
+     * Terminal-based game only support at most two players, although the hk.ust.comp3021.game package supports up to 26 players.
+     * This is only because it is hard to control too many players in a terminal-based game.
      *
-     * @param gameState The game state.
+     * @param gameState       The game state.
+     * @param inputEngine     the terminal input engin.
+     * @param renderingEngine the terminal rendering engine.
+     * @throws IllegalArgumentException when there are more than two players in the map.
      */
     public TerminalSokobanGame(GameState gameState, TerminalInputEngine inputEngine, TerminalRenderingEngine renderingEngine) {
         super(gameState);
+        if (gameState.getAllPlayerPositions().size() > 2) {
+            throw new IllegalArgumentException("TerminalSokobanGame only support at most two players.");
+        }
         this.inputEngine = inputEngine;
         this.renderingEngine = renderingEngine;
     }
@@ -34,8 +42,9 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
         renderingEngine.message(GAME_READY_MESSAGE);
         renderingEngine.render(state);
         while (!shouldStop()) {
-            final var undoQuota = state.getUndoQuota();
-            final var undoQuotaMessage = String.format(UNDO_QUOTA_TEMPLATE, undoQuota < 0 ? UNDO_QUOTA_UNLIMITED : String.valueOf(undoQuota));
+            final var undoQuotaMessage = state.getUndoQuota()
+                .map(it -> String.format(UNDO_QUOTA_TEMPLATE, it))
+                .orElse(UNDO_QUOTA_UNLIMITED);
             renderingEngine.message(undoQuotaMessage);
             renderingEngine.message(">>> ");
             final var action = inputEngine.fetchAction();
@@ -48,8 +57,6 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
         renderingEngine.message(GAME_EXIT_MESSAGE);
         if (this.state.isWin()) {
             renderingEngine.message(WIN_MESSAGE);
-        } else if (this.state.isStuck()) {
-            renderingEngine.message(LOSE_MESSAGE);
         }
     }
 }

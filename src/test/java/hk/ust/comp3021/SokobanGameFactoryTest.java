@@ -31,7 +31,7 @@ class SokobanGameFactoryTest {
         final var gameMap = SokobanGameFactory.loadGameMap(mapFile);
         assertEquals(6, gameMap.getMaxWidth());
         assertEquals(7, gameMap.getMaxHeight());
-        assertEquals(233, gameMap.getUndoLimit());
+        assertEquals(233, gameMap.getUndoLimit().orElse(null));
     }
 
 

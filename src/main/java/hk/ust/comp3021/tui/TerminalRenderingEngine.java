@@ -28,8 +28,8 @@ public class TerminalRenderingEngine implements RenderingEngine {
     @Override
     public void render(@NotNull GameState state) {
         final var builder = new StringBuilder();
-        for (int y = 0; y <= state.getBoardHeight(); y++) {
-            for (int x = 0; x <= state.getBoardWidth(); x++) {
+        for (int y = 0; y <= state.getMapMaxHeight(); y++) {
+            for (int x = 0; x <= state.getMapMaxWidth(); x++) {
                 final var entity = state.getEntity(Position.of(x, y));
                 final var charToPrint = switch (entity) {
                     case Wall ignored -> '#';

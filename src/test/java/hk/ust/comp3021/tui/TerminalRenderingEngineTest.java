@@ -2,6 +2,7 @@ package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.game.GameMap;
 import hk.ust.comp3021.game.GameState;
+import hk.ust.comp3021.utils.Helper;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -36,7 +37,7 @@ class TerminalRenderingEngineTest {
                 #..a.####
                 ######
                 """;
-        final var gameState = new GameState(GameMap.parse(testMap));
+        final var gameState = new GameState(Helper.parseGameMap(testMap));
         final var stream = new CapturingStream();
 
         final var renderingEngine = new TerminalRenderingEngine(stream);

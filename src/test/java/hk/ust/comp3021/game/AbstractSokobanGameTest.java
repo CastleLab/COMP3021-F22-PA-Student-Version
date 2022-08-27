@@ -1,8 +1,12 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.actions.*;
+import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Empty;
+import hk.ust.comp3021.utils.Helper;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +30,7 @@ class AbstractSokobanGameTest {
     void testExceedingUndoQuota() {
         final var gameState = mock(GameState.class);
         when(gameState.getPlayerPositionById(anyInt())).thenReturn(Position.of(0, 0));
-        when(gameState.getUndoQuota()).thenReturn(0);
+        when(gameState.getUndoQuota()).thenReturn(Optional.of(0));
 
         final var game = new SokobanGameForTesting(gameState);
         final var result = game.feedActionForProcessing(new Undo(0));
@@ -38,13 +42,27 @@ class AbstractSokobanGameTest {
     void testUndoWithinQuota() {
         final var gameState = mock(GameState.class);
         when(gameState.getPlayerPositionById(anyInt())).thenReturn(Position.of(0, 0));
-        when(gameState.getUndoQuota()).thenReturn(1);
+        when(gameState.getUndoQuota()).thenReturn(Optional.of(1));
 
         final var game = new SokobanGameForTesting(gameState);
         final var result = game.feedActionForProcessing(new Undo(0));
 
         verify(gameState, times(1)).undo();
         assertTrue(result instanceof ActionResult.Success);
+    }
+
+    @Test
+    void testUndoUnlimited() {
+         final var gameState = mock(GameState.class);
+        when(gameState.getPlayerPositionById(anyInt())).thenReturn(Position.of(0, 0));
+        when(gameState.getUndoQuota()).thenReturn(Optional.empty());
+
+        final var game = new SokobanGameForTesting(gameState);
+        for (int i = 0; i < 10000; i++) {
+            final var result = game.feedActionForProcessing(new Undo(0));
+            assertTrue(result instanceof ActionResult.Success);
+        }
+        verify(gameState, times(10000)).undo();
     }
 
     @Test
@@ -68,7 +86,7 @@ class AbstractSokobanGameTest {
                 #a...#
                 ######
                 """;
-        final var testMap = GameMap.parse(mapText);
+        final var testMap = Helper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -88,7 +106,7 @@ class AbstractSokobanGameTest {
                 #a...#
                 ######
                 """;
-        final var testMap = GameMap.parse(mapText);
+        final var testMap = Helper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -108,7 +126,7 @@ class AbstractSokobanGameTest {
                 #ab.@#
                 ######
                 """;
-        final var testMap = GameMap.parse(mapText);
+        final var testMap = Helper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -128,7 +146,7 @@ class AbstractSokobanGameTest {
                 #....#
                 ######
                 """;
-        final var testMap = GameMap.parse(mapText);
+        final var testMap = Helper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -149,7 +167,7 @@ class AbstractSokobanGameTest {
                 ##...#
                 ######
                 """;
-        final var testMap = GameMap.parse(mapText);
+        final var testMap = Helper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -170,7 +188,7 @@ class AbstractSokobanGameTest {
                 ##...#
                 ######
                 """;
-        final var testMap = GameMap.parse(mapText);
+        final var testMap = Helper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -187,12 +205,37 @@ class AbstractSokobanGameTest {
     }
 
     @Test
-    void testShouldStopWhenStuck() {
-        final var gameState = mock(GameState.class);
-        when(gameState.isStuck()).thenReturn(true);
+    void testCheckpointWhenNeed() {
+        final var gameState = spy(new GameState(Helper.parseGameMap("""
+                233
+                ######
+                #.Aa@#
+                #..a@#
+                ######
+                """
+        )));
 
         final var game = new SokobanGameForTesting(gameState);
-        assertTrue(game.shouldStop());
+        final var result = game.feedActionForProcessing(new Move.Right(0));
+
+        verify(gameState, times(1)).checkpoint();
+    }
+
+    @Test
+    void testCheckpointWhenNotNeed() {
+        final var gameState = spy(new GameState(Helper.parseGameMap("""
+                233
+                ######
+                #A.a@#
+                #..a@#
+                ######
+                """
+        )));
+
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Right(0));
+
+        verify(gameState, never()).checkpoint();
     }
 
     private static class SokobanGameForTesting extends AbstractSokobanGame {

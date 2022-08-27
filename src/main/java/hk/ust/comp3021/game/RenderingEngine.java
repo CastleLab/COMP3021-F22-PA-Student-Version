@@ -16,6 +16,7 @@ public interface RenderingEngine {
 
     /**
      * Display a message to the player.
+     *
      * @param content The message
      */
     void message(@NotNull String content);

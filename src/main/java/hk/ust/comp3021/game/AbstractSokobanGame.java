@@ -25,14 +25,17 @@ public abstract class AbstractSokobanGame implements SokobanGame {
     }
 
     protected boolean shouldStop() {
-        return isExitSpecified || this.state.isWin() || this.state.isStuck();
+        return isExitSpecified || this.state.isWin();
     }
 
     protected ActionResult processAction(@NotNull Action action) {
         return switch (action) {
             case InvalidInput i -> new ActionResult.Failed(action, i.getMessage());
             case Undo ignored -> {
-                if (this.state.getUndoQuota() != 0) {
+                final var shouldUndo = this.state.getUndoQuota()
+                    .map(it -> it > 0)
+                    .orElse(true);
+                if (shouldUndo) {
                     this.state.undo();
                     yield new ActionResult.Success(action);
                 } else {
