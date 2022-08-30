@@ -3,6 +3,8 @@ package hk.ust.comp3021.tui;
 import hk.ust.comp3021.game.GameMap;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.utils.Helper;
+import hk.ust.comp3021.utils.TestTag;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TerminalRenderingEngineTest {
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testMessage() {
         final var stream = new CapturingStream();
@@ -25,6 +28,7 @@ class TerminalRenderingEngineTest {
         assertEquals(randomString + System.lineSeparator(), stream.getContent());
     }
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testRender() {
         String testMap = """

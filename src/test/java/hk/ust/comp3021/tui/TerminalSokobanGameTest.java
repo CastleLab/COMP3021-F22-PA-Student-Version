@@ -5,6 +5,8 @@ import hk.ust.comp3021.actions.InvalidInput;
 import hk.ust.comp3021.actions.Move;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.Position;
+import hk.ust.comp3021.utils.TestTag;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import static org.mockito.Mockito.*;
 
 class TerminalSokobanGameTest {
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testGameLoop() {
         final var gameState = mock(GameState.class);
@@ -49,6 +52,7 @@ class TerminalSokobanGameTest {
         verify(renderingEngine, atLeastOnce()).message(any());
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testGameExit() {
         final var gameState = mock(GameState.class);
@@ -66,6 +70,7 @@ class TerminalSokobanGameTest {
         verify(renderingEngine, atLeastOnce()).message(any());
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testGameWin() {
         final var gameState = mock(GameState.class);
@@ -82,6 +87,7 @@ class TerminalSokobanGameTest {
         verify(renderingEngine, atLeastOnce()).message(any());
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testMoreThanTwoPlayers() {
         final var gameState = mock(GameState.class);
@@ -92,6 +98,7 @@ class TerminalSokobanGameTest {
         assertThrowsExactly(IllegalArgumentException.class, () -> new TerminalSokobanGame(gameState, inputEngine, renderingEngine));
     }
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testTwoPlayers() {
         final var gameState = mock(GameState.class);

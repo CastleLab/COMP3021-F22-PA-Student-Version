@@ -1,5 +1,8 @@
 package hk.ust.comp3021;
 
+import hk.ust.comp3021.utils.TestTag;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -14,6 +17,7 @@ class SokobanGameFactoryTest {
     @TempDir
     private Path tempDir;
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testLoadFromFile() throws IOException {
         final var mapFile = tempDir.resolve("tempMap.map");

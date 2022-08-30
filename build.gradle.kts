@@ -78,9 +78,6 @@ tasks {
     withType<Test> {
         group = "verification"
 
-        // Use JUnit Platform for unit tests.
-        useJUnitPlatform()
-
         systemProperties(
             "junit.jupiter.execution.timeout.testable.method.default" to "2000 ms"
         )

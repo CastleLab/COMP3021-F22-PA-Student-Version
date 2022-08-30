@@ -4,6 +4,8 @@ import hk.ust.comp3021.actions.*;
 import hk.ust.comp3021.entities.Box;
 import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.utils.Helper;
+import hk.ust.comp3021.utils.TestTag;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -14,6 +16,7 @@ import static org.mockito.Mockito.*;
 
 class AbstractSokobanGameTest {
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testInvalidInput() {
         final var game = new SokobanGameForTesting(mock(GameState.class));
@@ -26,6 +29,7 @@ class AbstractSokobanGameTest {
         assertEquals(message, ((ActionResult.Failed) result).getReason());
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testExceedingUndoQuota() {
         final var gameState = mock(GameState.class);
@@ -38,6 +42,7 @@ class AbstractSokobanGameTest {
         assertTrue(result instanceof ActionResult.Failed);
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testUndoWithinQuota() {
         final var gameState = mock(GameState.class);
@@ -51,6 +56,7 @@ class AbstractSokobanGameTest {
         assertTrue(result instanceof ActionResult.Success);
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testUndoUnlimited() {
          final var gameState = mock(GameState.class);
@@ -65,6 +71,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(10000)).undo();
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testExit() {
         final var gameState = mock(GameState.class);
@@ -96,6 +103,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(1)).move(any(), any());
     }
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testHitWall() {
         String mapText = """
@@ -116,6 +124,7 @@ class AbstractSokobanGameTest {
         verify(gameState, never()).move(any(), any());
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testHitAnotherPlayer() {
         String mapText = """
@@ -136,6 +145,7 @@ class AbstractSokobanGameTest {
         verify(gameState, never()).move(any(), any());
     }
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testPushBox() {
         String mapText = """
@@ -157,6 +167,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(1)).checkpoint();
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testPushBoxAgainstWall() {
         String mapText = """
@@ -178,6 +189,7 @@ class AbstractSokobanGameTest {
     }
 
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testMoveNonExistingPlayer() {
         String mapText = """
@@ -195,6 +207,7 @@ class AbstractSokobanGameTest {
         assertThrowsExactly(IllegalArgumentException.class, () -> game.feedActionForProcessing(new Move.Down(1)));
     }
 
+    @Tag(TestTag.PUBLIC)
     @Test
     void testShouldStopWhenWin() {
         final var gameState = mock(GameState.class);
@@ -204,6 +217,7 @@ class AbstractSokobanGameTest {
         assertTrue(game.shouldStop());
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testCheckpointWhenNeed() {
         final var gameState = spy(new GameState(Helper.parseGameMap("""
@@ -221,6 +235,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(1)).checkpoint();
     }
 
+    @Tag(TestTag.HIDDEN)
     @Test
     void testCheckpointWhenNotNeed() {
         final var gameState = spy(new GameState(Helper.parseGameMap("""
