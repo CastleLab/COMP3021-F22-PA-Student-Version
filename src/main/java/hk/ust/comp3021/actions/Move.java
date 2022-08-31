@@ -17,8 +17,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
      * @param currentPosition The current position.
      * @return The next position.
      */
-    @NotNull
-    public abstract Position nextPosition(@NotNull Position currentPosition);
+    public abstract @NotNull Position nextPosition(@NotNull Position currentPosition);
 
     /**
      * The action of moving down.
@@ -33,8 +32,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
         }
 
         @Override
-        @NotNull
-        public Position nextPosition(@NotNull Position currentPosition) {
+        public @NotNull Position nextPosition(@NotNull Position currentPosition) {
             return Position.of(currentPosition.x(), currentPosition.y() + 1);
         }
     }
@@ -51,8 +49,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
         }
 
         @Override
-        @NotNull
-        public Position nextPosition(@NotNull Position currentPosition) {
+        public @NotNull Position nextPosition(@NotNull Position currentPosition) {
             return Position.of(currentPosition.x() - 1, currentPosition.y());
         }
     }
@@ -69,8 +66,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
         }
 
         @Override
-        @NotNull
-        public Position nextPosition(@NotNull Position currentPosition) {
+        public @NotNull Position nextPosition(@NotNull Position currentPosition) {
             return Position.of(currentPosition.x() + 1, currentPosition.y());
         }
     }
@@ -87,8 +83,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
         }
 
         @Override
-        @NotNull
-        public Position nextPosition(@NotNull Position currentPosition) {
+        public @NotNull Position nextPosition(@NotNull Position currentPosition) {
             return Position.of(currentPosition.x(), currentPosition.y() - 1);
         }
     }

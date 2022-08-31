@@ -1,10 +1,8 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.actions.*;
-import hk.ust.comp3021.entities.Box;
-import hk.ust.comp3021.entities.Empty;
-import hk.ust.comp3021.utils.Helper;
-import hk.ust.comp3021.utils.TestTag;
+import hk.ust.comp3021.utils.TestHelper;
+import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +14,7 @@ import static org.mockito.Mockito.*;
 
 class AbstractSokobanGameTest {
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testInvalidInput() {
         final var game = new SokobanGameForTesting(mock(GameState.class));
@@ -29,7 +27,7 @@ class AbstractSokobanGameTest {
         assertEquals(message, ((ActionResult.Failed) result).getReason());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testExceedingUndoQuota() {
         final var gameState = mock(GameState.class);
@@ -42,7 +40,7 @@ class AbstractSokobanGameTest {
         assertTrue(result instanceof ActionResult.Failed);
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testUndoWithinQuota() {
         final var gameState = mock(GameState.class);
@@ -56,10 +54,10 @@ class AbstractSokobanGameTest {
         assertTrue(result instanceof ActionResult.Success);
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testUndoUnlimited() {
-         final var gameState = mock(GameState.class);
+        final var gameState = mock(GameState.class);
         when(gameState.getPlayerPositionById(anyInt())).thenReturn(Position.of(0, 0));
         when(gameState.getUndoQuota()).thenReturn(Optional.empty());
 
@@ -71,7 +69,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(10000)).undo();
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testExit() {
         final var gameState = mock(GameState.class);
@@ -93,7 +91,7 @@ class AbstractSokobanGameTest {
                 #a...#
                 ######
                 """;
-        final var testMap = Helper.parseGameMap(mapText);
+        final var testMap = TestHelper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -103,7 +101,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(1)).move(any(), any());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testHitWall() {
         String mapText = """
@@ -114,7 +112,7 @@ class AbstractSokobanGameTest {
                 #a...#
                 ######
                 """;
-        final var testMap = Helper.parseGameMap(mapText);
+        final var testMap = TestHelper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -124,7 +122,7 @@ class AbstractSokobanGameTest {
         verify(gameState, never()).move(any(), any());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testHitAnotherPlayer() {
         String mapText = """
@@ -135,7 +133,7 @@ class AbstractSokobanGameTest {
                 #ab.@#
                 ######
                 """;
-        final var testMap = Helper.parseGameMap(mapText);
+        final var testMap = TestHelper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -145,7 +143,7 @@ class AbstractSokobanGameTest {
         verify(gameState, never()).move(any(), any());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testPushBox() {
         String mapText = """
@@ -156,7 +154,7 @@ class AbstractSokobanGameTest {
                 #....#
                 ######
                 """;
-        final var testMap = Helper.parseGameMap(mapText);
+        final var testMap = TestHelper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -167,7 +165,7 @@ class AbstractSokobanGameTest {
         verify(gameState, times(1)).checkpoint();
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testPushBoxAgainstWall() {
         String mapText = """
@@ -178,7 +176,7 @@ class AbstractSokobanGameTest {
                 ##...#
                 ######
                 """;
-        final var testMap = Helper.parseGameMap(mapText);
+        final var testMap = TestHelper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
@@ -189,7 +187,7 @@ class AbstractSokobanGameTest {
     }
 
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testMoveNonExistingPlayer() {
         String mapText = """
@@ -200,14 +198,14 @@ class AbstractSokobanGameTest {
                 ##...#
                 ######
                 """;
-        final var testMap = Helper.parseGameMap(mapText);
+        final var testMap = TestHelper.parseGameMap(mapText);
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
         assertThrowsExactly(IllegalArgumentException.class, () -> game.feedActionForProcessing(new Move.Down(1)));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testShouldStopWhenWin() {
         final var gameState = mock(GameState.class);
@@ -217,10 +215,10 @@ class AbstractSokobanGameTest {
         assertTrue(game.shouldStop());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testCheckpointWhenNeed() {
-        final var gameState = spy(new GameState(Helper.parseGameMap("""
+        final var gameState = spy(new GameState(TestHelper.parseGameMap("""
                 233
                 ######
                 #.Aa@#
@@ -233,12 +231,13 @@ class AbstractSokobanGameTest {
         final var result = game.feedActionForProcessing(new Move.Right(0));
 
         verify(gameState, times(1)).checkpoint();
+        assertInstanceOf(ActionResult.Success.class, result);
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testCheckpointWhenNotNeed() {
-        final var gameState = spy(new GameState(Helper.parseGameMap("""
+        final var gameState = spy(new GameState(TestHelper.parseGameMap("""
                 233
                 ######
                 #A.a@#
@@ -251,6 +250,7 @@ class AbstractSokobanGameTest {
         final var result = game.feedActionForProcessing(new Move.Right(0));
 
         verify(gameState, never()).checkpoint();
+        assertInstanceOf(ActionResult.Success.class, result);
     }
 
     private static class SokobanGameForTesting extends AbstractSokobanGame {

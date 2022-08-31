@@ -1,12 +1,11 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.entities.*;
-import hk.ust.comp3021.utils.Helper;
+import hk.ust.comp3021.utils.TestHelper;
 import hk.ust.comp3021.utils.ShouldNotReachException;
-import hk.ust.comp3021.utils.TestTag;
+import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameStateTest {
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testMapCopying() {
         final var maxWidth = 2333;
@@ -49,10 +48,10 @@ class GameStateTest {
         assertEquals(1, gameState.getDestinations().size());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testAllPlayerIds() {
-         final var testMap = Helper.parseGameMap("""
+         final var testMap = TestHelper.parseGameMap("""
             233
             ######
             #APp@#
@@ -64,10 +63,10 @@ class GameStateTest {
         assertEquals(new HashSet<>(Arrays.asList(Position.of(1, 1), Position.of(2, 1), Position.of(2, 2))), gameState.getAllPlayerPositions());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testWin() {
-        final var testMap = Helper.parseGameMap("""
+        final var testMap = TestHelper.parseGameMap("""
             233
             ######
             #A.a@#
@@ -81,10 +80,10 @@ class GameStateTest {
         assertTrue(gameState.isWin());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testMove() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             233
             ######
             #A.a@#
@@ -97,10 +96,10 @@ class GameStateTest {
         assertEquals(Position.of(2, 1), gameState.getPlayerPositionById(0));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testPushBox() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             233
             ######
             #.Aa@#
@@ -116,10 +115,10 @@ class GameStateTest {
         assertInstanceOf(Box.class, gameState.getEntity(Position.of(4, 1)));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testGetUndoLimit() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             233
             ######
             #.Aa@#
@@ -130,10 +129,10 @@ class GameStateTest {
         assertEquals(233, gameState.getUndoQuota().orElse(null));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testGetUndoUnlimited() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             -1
             ######
             #.Aa@#
@@ -144,10 +143,10 @@ class GameStateTest {
         assertTrue(gameState.getUndoQuota().isEmpty());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testUndoWhenThereIsCheckpoint() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             233
             ######
             #.Aa@#
@@ -167,10 +166,10 @@ class GameStateTest {
         assertEquals(232, gameState.getUndoQuota().orElse(null));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testUndoWhenThereIsMoveButNoCheckpoint() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             233
             ######
             #A.a@#
@@ -185,10 +184,10 @@ class GameStateTest {
         assertEquals(233, gameState.getUndoQuota().orElse(null));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testUndoWhenThereIsNoMove() {
-        final var gameState = new GameState(Helper.parseGameMap("""
+        final var gameState = new GameState(TestHelper.parseGameMap("""
             233
             ######
             #A.a@#

@@ -2,17 +2,14 @@ package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.actions.Exit;
 import hk.ust.comp3021.actions.InvalidInput;
-import hk.ust.comp3021.actions.Move;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.Position;
-import hk.ust.comp3021.utils.TestTag;
+import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
@@ -20,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 class TerminalSokobanGameTest {
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testGameLoop() {
         final var gameState = mock(GameState.class);
@@ -52,7 +49,7 @@ class TerminalSokobanGameTest {
         verify(renderingEngine, atLeastOnce()).message(any());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testGameExit() {
         final var gameState = mock(GameState.class);
@@ -70,7 +67,7 @@ class TerminalSokobanGameTest {
         verify(renderingEngine, atLeastOnce()).message(any());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testGameWin() {
         final var gameState = mock(GameState.class);
@@ -87,7 +84,7 @@ class TerminalSokobanGameTest {
         verify(renderingEngine, atLeastOnce()).message(any());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testMoreThanTwoPlayers() {
         final var gameState = mock(GameState.class);
@@ -98,7 +95,7 @@ class TerminalSokobanGameTest {
         assertThrowsExactly(IllegalArgumentException.class, () -> new TerminalSokobanGame(gameState, inputEngine, renderingEngine));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testTwoPlayers() {
         final var gameState = mock(GameState.class);

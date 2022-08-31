@@ -6,6 +6,7 @@ import hk.ust.comp3021.game.SokobanGame;
 import hk.ust.comp3021.tui.TerminalInputEngine;
 import hk.ust.comp3021.tui.TerminalRenderingEngine;
 import hk.ust.comp3021.tui.TerminalSokobanGame;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,7 +25,7 @@ public class SokobanGameFactory {
      * @return The Sokoban game.
      * @throws IOException if mapFile cannot be load
      */
-    public static SokobanGame createTUIGame(String mapFile) throws IOException {
+    public static @NotNull SokobanGame createTUIGame(@NotNull String mapFile) throws IOException {
         Path file;
         if (!mapFile.endsWith(".map")) {
             // treat as built-in maps
@@ -40,9 +41,9 @@ public class SokobanGameFactory {
         }
         final var gameMap = loadGameMap(file);
         return new TerminalSokobanGame(
-            new GameState(gameMap),
-            new TerminalInputEngine(System.in),
-            new TerminalRenderingEngine(System.out)
+                new GameState(gameMap),
+                new TerminalInputEngine(System.in),
+                new TerminalRenderingEngine(System.out)
         );
     }
 
@@ -52,7 +53,7 @@ public class SokobanGameFactory {
      * @return The parsed game map.
      * @throws IOException When there is an issue loading the file.
      */
-    public static GameMap loadGameMap(Path mapFile) throws IOException {
+    public static @NotNull GameMap loadGameMap(@NotNull Path mapFile) throws IOException {
         final var fileContent = Files.readString(mapFile);
         return GameMap.parse(fileContent);
     }

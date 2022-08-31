@@ -19,8 +19,7 @@ public abstract sealed class ActionResult {
     /**
      * @return The action.
      */
-    @NotNull
-    public Action getAction() {
+    public @NotNull Action getAction() {
         return action;
     }
 
@@ -47,8 +46,7 @@ public abstract sealed class ActionResult {
         /**
          * @return The reason for the failure.
          */
-        @NotNull
-        public String getReason() {
+        public @NotNull String getReason() {
             return reason;
         }
 

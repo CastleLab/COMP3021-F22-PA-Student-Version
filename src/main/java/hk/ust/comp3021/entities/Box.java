@@ -16,7 +16,7 @@ public final class Box extends Entity {
     }
 
     /**
-     * Get the id of the player that is allowd to move this box.
+     * Get the id of the player that is allowed to move this box.
      *
      * @return player id.
      */

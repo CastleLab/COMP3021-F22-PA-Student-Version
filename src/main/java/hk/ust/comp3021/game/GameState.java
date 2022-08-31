@@ -69,9 +69,9 @@ public class GameState {
      */
     public @Nullable Position getPlayerPositionById(int id) {
         return this.entities.entrySet().stream()
-            .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
-            .map(Map.Entry::getKey)
-            .findFirst().orElse(null);
+                .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(null);
     }
 
     /**
@@ -81,9 +81,9 @@ public class GameState {
      */
     public @NotNull Set<Position> getAllPlayerPositions() {
         return this.entities.entrySet().stream()
-            .filter(e -> e.getValue() instanceof Player)
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
+                .filter(e -> e.getValue() instanceof Player)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -110,8 +110,8 @@ public class GameState {
      * Get the undo quota currently left, i.e., the maximum number of undo actions that can be performed from now on.
      * If undo is unlimited,
      *
-     * @return  the undo quota left (Using {@link Optional#of(Object)} if the game has an undo limit;
-     *         {@link Optional#empty()} if the game has unlimited undo.
+     * @return the undo quota left (using {@link Optional#of(Object)}) if the game has an undo limit;
+     * {@link Optional#empty()} if the game has unlimited undo.
      */
     public Optional<Integer> getUndoQuota() {
         if (this.undoQuota < 0) {
@@ -171,13 +171,13 @@ public class GameState {
      */
     private void applyTransition(Transition transition) {
         transition.moves.entrySet().stream()
-            .map(e -> {
-                final var entity = this.entities.remove(e.getKey());
-                this.entities.put(e.getKey(), new Empty());
-                return Map.entry(e.getValue(), entity);
-            })
-            .toList()
-            .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
+                .map(e -> {
+                    final var entity = this.entities.remove(e.getKey());
+                    this.entities.put(e.getKey(), new Empty());
+                    return Map.entry(e.getValue(), entity);
+                })
+                .toList()
+                .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
     }
 
     /**
@@ -222,9 +222,9 @@ public class GameState {
 
         private void add(Position from, Position to) {
             final var key = this.moves.entrySet().stream()
-                .filter(e -> e.getValue().equals(from))
-                .map(Map.Entry::getKey)
-                .findFirst().orElse(from);
+                    .filter(e -> e.getValue().equals(from))
+                    .map(Map.Entry::getKey)
+                    .findFirst().orElse(from);
             this.moves.put(key, to);
         }
 
@@ -244,8 +244,8 @@ public class GameState {
         @Override
         public String toString() {
             final var moves = this.moves.entrySet().stream()
-                .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
-                .toList();
+                    .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
+                    .toList();
             return String.join(",", moves);
         }
     }

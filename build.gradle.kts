@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 import proguard.gradle.ProGuardTask
 
 plugins {
@@ -41,7 +43,7 @@ dependencies {
 }
 
 checkstyle {
-    toolVersion = "10.3.2";
+    toolVersion = "10.3.2"
 }
 
 tasks {
@@ -95,7 +97,7 @@ tasks {
 
         libraryjars("${System.getProperty("java.home")}/jmods")
         libraryjars(sourceSets.main.map {
-            (it.compileClasspath + it.runtimeClasspath).distinct() - jar.flatMap { it.archiveFile }.get().asFile
+            (it.compileClasspath + it.runtimeClasspath).distinct() - jar.flatMap { jar -> jar.archiveFile }.get().asFile
         })
 
         keep("public class hk.ust.comp3021.Sokoban { public static void main(java.lang.String[]); }")

@@ -1,9 +1,8 @@
 package hk.ust.comp3021.tui;
 
-import hk.ust.comp3021.game.GameMap;
 import hk.ust.comp3021.game.GameState;
-import hk.ust.comp3021.utils.Helper;
-import hk.ust.comp3021.utils.TestTag;
+import hk.ust.comp3021.utils.TestHelper;
+import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TerminalRenderingEngineTest {
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testMessage() {
         final var stream = new CapturingStream();
@@ -28,7 +27,7 @@ class TerminalRenderingEngineTest {
         assertEquals(randomString + System.lineSeparator(), stream.getContent());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testRender() {
         String testMap = """
@@ -41,7 +40,7 @@ class TerminalRenderingEngineTest {
                 #..a.####
                 ######
                 """;
-        final var gameState = new GameState(Helper.parseGameMap(testMap));
+        final var gameState = new GameState(TestHelper.parseGameMap(testMap));
         final var stream = new CapturingStream();
 
         final var renderingEngine = new TerminalRenderingEngine(stream);

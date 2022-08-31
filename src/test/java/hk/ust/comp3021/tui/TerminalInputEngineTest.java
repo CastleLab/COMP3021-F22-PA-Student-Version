@@ -3,7 +3,7 @@ package hk.ust.comp3021.tui;
 import hk.ust.comp3021.actions.Exit;
 import hk.ust.comp3021.actions.InvalidInput;
 import hk.ust.comp3021.actions.Undo;
-import hk.ust.comp3021.utils.TestTag;
+import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TerminalInputEngineTest {
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testInvalidInput() {
         final var inputStream = fixValueStream("blah blah");
@@ -29,7 +29,7 @@ class TerminalInputEngineTest {
         assertTrue(action instanceof InvalidInput);
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testExit() {
         final var inputStream = fixValueStream("exit");
@@ -40,7 +40,7 @@ class TerminalInputEngineTest {
         assertTrue(action instanceof Exit);
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @ParameterizedTest
     @CsvSource({"R,0", "U,1"})
     void testUndo(String input, int playerId) {
@@ -53,7 +53,7 @@ class TerminalInputEngineTest {
         assertEquals(playerId, action.getInitiator());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @ParameterizedTest
     @CsvSource({
         "W,Up,0",

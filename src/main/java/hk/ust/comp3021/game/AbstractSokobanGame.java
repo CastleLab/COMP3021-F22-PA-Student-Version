@@ -24,17 +24,25 @@ public abstract class AbstractSokobanGame implements SokobanGame {
         this.state = gameState;
     }
 
+    /**
+     * @return True is the game should stop running.
+     * For example when the user specified to exit the game or the user won the game.
+     */
     protected boolean shouldStop() {
         return isExitSpecified || this.state.isWin();
     }
 
+    /**
+     * @param action The action received from the user.
+     * @return The result of the action.
+     */
     protected ActionResult processAction(@NotNull Action action) {
         return switch (action) {
             case InvalidInput i -> new ActionResult.Failed(action, i.getMessage());
             case Undo ignored -> {
                 final var shouldUndo = this.state.getUndoQuota()
-                    .map(it -> it > 0)
-                    .orElse(true);
+                        .map(it -> it > 0)
+                        .orElse(true);
                 if (shouldUndo) {
                     this.state.undo();
                     yield new ActionResult.Success(action);

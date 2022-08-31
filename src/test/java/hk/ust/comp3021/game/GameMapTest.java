@@ -4,8 +4,8 @@ import hk.ust.comp3021.entities.Box;
 import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Player;
 import hk.ust.comp3021.entities.Wall;
-import hk.ust.comp3021.utils.Helper;
-import hk.ust.comp3021.utils.TestTag;
+import hk.ust.comp3021.utils.TestHelper;
+import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -28,64 +28,64 @@ class GameMapTest {
         ######
         """;
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testWidthForRectangularMap() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         assertEquals(6, gameMap.getMaxWidth());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testHeightForRectangularMap() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         assertEquals(7, gameMap.getMaxHeight());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testGetDestinations() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         assertEquals(2, gameMap.getDestinations().size());
         assertInstanceOf(Empty.class, gameMap.getEntity(Position.of(4, 1)));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testWallParsing() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         assertInstanceOf(Wall.class, gameMap.getEntity(Position.of(0, 0)));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testPlayerParsing() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         final var player = assertInstanceOf(Player.class, gameMap.getEntity(Position.of(1, 1)));
         assertNotNull(player);
         assertEquals(0, player.getId());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testBoxParsing() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         final var box = assertInstanceOf(Box.class, gameMap.getEntity(Position.of(2, 4)));
         assertNotNull(box);
         assertEquals(0, box.getPlayerId());
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testEmptyCellParsing() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         assertInstanceOf(Empty.class, gameMap.getEntity(Position.of(2, 1)));
     }
 
-    @Tag(TestTag.PUBLIC)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testGetEntity() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         final var entity = gameMap.getEntity(Position.of(0, 0));
         assertTrue(entity instanceof Wall);
     }
@@ -101,28 +101,28 @@ class GameMapTest {
         ######
         """;
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testWidthForNonRectangularMap() {
-        final var gameMap = Helper.parseGameMap(nonRectangularMap);
+        final var gameMap = TestHelper.parseGameMap(nonRectangularMap);
         assertEquals(9, gameMap.getMaxWidth());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testHeightForNonRectangularMap() {
-        final var gameMap = Helper.parseGameMap(nonRectangularMap);
+        final var gameMap = TestHelper.parseGameMap(nonRectangularMap);
         assertEquals(7, gameMap.getMaxHeight());
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testUndoLimitParsing() {
-        final var gameMap = Helper.parseGameMap(rectangularMap);
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
         assertEquals(233, gameMap.getUndoLimit().orElse(null));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testInsufficientDestinations() {
         final var invalidMap = """
@@ -135,17 +135,17 @@ class GameMapTest {
             #..a.#
             ######
             """;
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testEmptyMap() {
         final var invalidMap = "";
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testMapWithoutPlayer() {
         final var invalidMap = """
@@ -154,10 +154,10 @@ class GameMapTest {
             #.#
             ###
             """;
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testUnmatchedPlayersAndBoxes() {
         final var invalidMap = """
@@ -170,10 +170,10 @@ class GameMapTest {
             #..a.#
             ######
             """;
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testInvalidUndoLimit() {
         final var invalidMap = """
@@ -186,10 +186,10 @@ class GameMapTest {
             #..a.#
             ######
             """;
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testTwoPlayersMap() {
         final var twoPlayersMap = """
@@ -202,7 +202,7 @@ class GameMapTest {
             #..b.#
             ######
             """;
-        final var gameMap = Helper.parseGameMap(twoPlayersMap);
+        final var gameMap = TestHelper.parseGameMap(twoPlayersMap);
         final var playerIds = gameMap.getPlayerIds();
 
         final var expectedIds = new HashSet<Integer>();
@@ -211,7 +211,7 @@ class GameMapTest {
         assertEquals(expectedIds, playerIds);
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testManyPlayersMap() {
         final var manyPlayersMap = """
@@ -224,7 +224,7 @@ class GameMapTest {
             #g.bV@#
             ######
             """;
-        final var gameMap = Helper.parseGameMap(manyPlayersMap);
+        final var gameMap = TestHelper.parseGameMap(manyPlayersMap);
         final var playerIds = gameMap.getPlayerIds();
 
         final var expectedIds = new HashSet<>(Arrays.asList(
@@ -239,7 +239,7 @@ class GameMapTest {
         assertEquals(expectedIds, playerIds);
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testDuplicatedPlayers() {
         final var invalidMap = """
@@ -252,17 +252,17 @@ class GameMapTest {
             #..b.#
             ######
             """;
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testParseMapWithoutUndoLimit() {
         final var invalidMap = String.join("\n", rectangularMap.lines().skip(1).toList());
-        assertThrowsExactly(IllegalArgumentException.class, () -> Helper.parseGameMap(invalidMap));
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
-    @Tag(TestTag.HIDDEN)
+    @Tag(TestKind.HIDDEN)
     @Test
     void testSuperLargeMap() {
         assertDoesNotThrow(() -> {

@@ -15,7 +15,6 @@ public class StringResources {
 
     public static final String GAME_EXIT_MESSAGE = "Game exits.";
     public static final String WIN_MESSAGE = "You win.";
-    public static final String LOSE_MESSAGE = "You lose.";
 
     public static final String EXIT_COMMAND_TEXT = "exit";
 }

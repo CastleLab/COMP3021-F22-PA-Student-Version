@@ -35,10 +35,10 @@ public class GameMap {
     /**
      * Create a new GameMap with width, height, set of box destinations and undo limit.
      *
-     * @param maxWidth     width of the game map.
-     * @param maxHeight    height of the game map.
-     * @param destinations set of box destination positions.
-     * @param undoLimit    undo limit.
+     * @param maxWidth     Width of the game map.
+     * @param maxHeight    Height of the game map.
+     * @param destinations Set of box destination positions.
+     * @param undoLimit    Undo limit.
      *                     Positive numbers specify the maximum number of undo actions.
      *                     0 means undo is not allowed.
      *                     -1 means unlimited. Other negative numbers are not allowed.
