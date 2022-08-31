@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 class TerminalSokobanGameTest {
 
-    @Tag(TestKind.HIDDEN)
+    @Tag(TestKind.PUBLIC)
     @Test
     void testGameLoop() {
         final var gameState = mock(GameState.class);
