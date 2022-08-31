@@ -56,14 +56,14 @@ class TerminalInputEngineTest {
     @Tag(TestKind.HIDDEN)
     @ParameterizedTest
     @CsvSource({
-        "W,Up,0",
-        "A,Left,0",
-        "S,Down,0",
-        "D,Right,0",
-        "H,Left,1",
-        "J,Down,1",
-        "K,Up,1",
-        "L,Right,1",
+            "W,Up,0",
+            "A,Left,0",
+            "S,Down,0",
+            "D,Right,0",
+            "H,Left,1",
+            "J,Down,1",
+            "K,Up,1",
+            "L,Right,1",
     })
     void testMove(String input, String name, int playerId) {
         final var inputStream = fixValueStream(input);

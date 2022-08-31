@@ -3,7 +3,8 @@ package hk.ust.comp3021.utils;
 /**
  * Denotes the kind of test case.
  */
-public class TestKind {
+public enum TestKind {
+    ;
     /**
      * The tag for hidden test cases.
      */

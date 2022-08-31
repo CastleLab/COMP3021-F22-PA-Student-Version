@@ -18,15 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class GameMapTest {
 
     private static final String rectangularMap = """
-        233
-        ######
-        #A..@#
-        #...@#
-        #....#
-        #.a..#
-        #..a.#
-        ######
-        """;
+            233
+            ######
+            #A..@#
+            #...@#
+            #....#
+            #.a..#
+            #..a.#
+            ######
+            """;
 
     @Tag(TestKind.PUBLIC)
     @Test
@@ -91,15 +91,15 @@ class GameMapTest {
     }
 
     private static final String nonRectangularMap = """
-        233
-        ######
-        #A..@#
-        #...@###
-        #a....@##
-        #.a.....#
-        #..a.####
-        ######
-        """;
+            233
+            ######
+            #A..@#
+            #...@###
+            #a....@##
+            #.a.....#
+            #..a.####
+            ######
+            """;
 
     @Tag(TestKind.HIDDEN)
     @Test
@@ -126,15 +126,15 @@ class GameMapTest {
     @Test
     void testInsufficientDestinations() {
         final var invalidMap = """
-            233
-            ######
-            #A..@#
-            #...@#
-            #a...#
-            #.a..#
-            #..a.#
-            ######
-            """;
+                233
+                ######
+                #A..@#
+                #...@#
+                #a...#
+                #.a..#
+                #..a.#
+                ######
+                """;
         assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
@@ -149,11 +149,11 @@ class GameMapTest {
     @Test
     void testMapWithoutPlayer() {
         final var invalidMap = """
-            233
-            ###
-            #.#
-            ###
-            """;
+                233
+                ###
+                #.#
+                ###
+                """;
         assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
@@ -161,15 +161,15 @@ class GameMapTest {
     @Test
     void testUnmatchedPlayersAndBoxes() {
         final var invalidMap = """
-            233
-            ######
-            #A..@#
-            #...@#
-            #a.b@#
-            #.a.@#
-            #..a.#
-            ######
-            """;
+                233
+                ######
+                #A..@#
+                #...@#
+                #a.b@#
+                #.a.@#
+                #..a.#
+                ######
+                """;
         assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
@@ -177,15 +177,15 @@ class GameMapTest {
     @Test
     void testInvalidUndoLimit() {
         final var invalidMap = """
-            -233
-            ######
-            #A..@#
-            #...@#
-            #a.b@#
-            #.a.@#
-            #..a.#
-            ######
-            """;
+                -233
+                ######
+                #A..@#
+                #...@#
+                #a.b@#
+                #.a.@#
+                #..a.#
+                ######
+                """;
         assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 
@@ -193,15 +193,15 @@ class GameMapTest {
     @Test
     void testTwoPlayersMap() {
         final var twoPlayersMap = """
-            233
-            ######
-            #A..@#
-            #..B@#
-            #....#
-            #.a..#
-            #..b.#
-            ######
-            """;
+                233
+                ######
+                #A..@#
+                #..B@#
+                #....#
+                #.a..#
+                #..b.#
+                ######
+                """;
         final var gameMap = TestHelper.parseGameMap(twoPlayersMap);
         final var playerIds = gameMap.getPlayerIds();
 
@@ -215,26 +215,26 @@ class GameMapTest {
     @Test
     void testManyPlayersMap() {
         final var manyPlayersMap = """
-            233
-            ######
-            #A.P@@#
-            #vCB@@#
-            #.cpD@#
-            #Ga.d@#
-            #g.bV@#
-            ######
-            """;
+                233
+                ######
+                #A.P@@#
+                #vCB@@#
+                #.cpD@#
+                #Ga.d@#
+                #g.bV@#
+                ######
+                """;
         final var gameMap = TestHelper.parseGameMap(manyPlayersMap);
         final var playerIds = gameMap.getPlayerIds();
 
         final var expectedIds = new HashSet<>(Arrays.asList(
-            0,
-            'P' - 'A',
-            'C' - 'A',
-            'B' - 'A',
-            'D' - 'A',
-            'G' - 'A',
-            'V' - 'A'
+                0,
+                'P' - 'A',
+                'C' - 'A',
+                'B' - 'A',
+                'D' - 'A',
+                'G' - 'A',
+                'V' - 'A'
         ));
         assertEquals(expectedIds, playerIds);
     }
@@ -243,15 +243,15 @@ class GameMapTest {
     @Test
     void testDuplicatedPlayers() {
         final var invalidMap = """
-            233
-            ######
-            #A..@#
-            #..A@#
-            #....#
-            #.a..#
-            #..b.#
-            ######
-            """;
+                233
+                ######
+                #A..@#
+                #..A@#
+                #....#
+                #.a..#
+                #..b.#
+                ######
+                """;
         assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
     }
 

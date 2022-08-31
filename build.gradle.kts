@@ -44,6 +44,7 @@ dependencies {
 
 checkstyle {
     toolVersion = "10.3.2"
+    sourceSets = setOf(project.sourceSets.main.get())
 }
 
 tasks {
@@ -79,6 +80,8 @@ tasks {
     }
     withType<Test> {
         group = "verification"
+
+        useJUnitPlatform()
 
         systemProperties(
             "junit.jupiter.execution.timeout.testable.method.default" to "2000 ms"

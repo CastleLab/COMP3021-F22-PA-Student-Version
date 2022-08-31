@@ -19,7 +19,7 @@ public record Position(int x, int y) {
      * @param y The vertical displacement.
      * @return The newly created position.
      */
-        public static  @NotNull Position of(int x, int y) {
+    public static @NotNull Position of(int x, int y) {
         return new Position(x, y);
     }
 

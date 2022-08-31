@@ -134,12 +134,12 @@ public class GameMap {
             }
         });
         final var allBoxes = map.values().stream()
-            .filter(Box.class::isInstance)
-            .map(Box.class::cast)
-            .collect(Collectors.toSet());
+                .filter(Box.class::isInstance)
+                .map(Box.class::cast)
+                .collect(Collectors.toSet());
         final var allReferencedPlayers = allBoxes.stream()
-            .map(Box::getPlayerId)
-            .collect(Collectors.toSet());
+                .map(Box::getPlayerId)
+                .collect(Collectors.toSet());
         if (undoLimit < -1)
             throw new IllegalArgumentException("invalid undo limit");
         if (players.size() == 0)
@@ -197,9 +197,9 @@ public class GameMap {
      */
     public Set<Integer> getPlayerIds() {
         return this.map.values().stream()
-            .filter(it -> it instanceof Player)
-            .map(it -> ((Player) it).getId())
-            .collect(Collectors.toSet());
+                .filter(it -> it instanceof Player)
+                .map(it -> ((Player) it).getId())
+                .collect(Collectors.toSet());
     }
 
     /**

@@ -25,8 +25,8 @@ class TerminalSokobanGameTest {
         final var renderingEngine = mock(TerminalRenderingEngine.class);
         when(gameState.isWin()).thenReturn(false);
         when(inputEngine.fetchAction())
-            .thenReturn(new InvalidInput(0, ""))
-            .thenReturn(new Exit(0));
+                .thenReturn(new InvalidInput(0, ""))
+                .thenReturn(new Exit(0));
 
         final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
         game.run();
@@ -57,9 +57,9 @@ class TerminalSokobanGameTest {
         final var renderingEngine = mock(TerminalRenderingEngine.class);
         when(gameState.isWin()).thenReturn(false, false, false);
         when(inputEngine.fetchAction())
-            .thenReturn(new InvalidInput(0, ""),
-                new InvalidInput(0, ""),
-                new Exit(0));
+                .thenReturn(new InvalidInput(0, ""),
+                        new InvalidInput(0, ""),
+                        new Exit(0));
 
         final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
         game.run();
@@ -75,7 +75,7 @@ class TerminalSokobanGameTest {
         final var renderingEngine = mock(TerminalRenderingEngine.class);
         when(gameState.isWin()).thenReturn(false, false, false, true);
         when(inputEngine.fetchAction())
-            .thenReturn(new InvalidInput(0, ""));
+                .thenReturn(new InvalidInput(0, ""));
 
         final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
         game.run();
