@@ -81,6 +81,7 @@ class AbstractSokobanGameTest {
         assertTrue(game.shouldStop());
     }
 
+    @Tag(TestKind.PUBLIC)
     @Test
     void testMove() {
         String mapText = """
@@ -202,7 +203,9 @@ class AbstractSokobanGameTest {
         final var gameState = spy(new GameState(testMap));
 
         final var game = new SokobanGameForTesting(gameState);
-        assertThrowsExactly(IllegalArgumentException.class, () -> game.feedActionForProcessing(new Move.Down(1)));
+        final var result = game.feedActionForProcessing(new Move.Down(23));
+
+        assertTrue(result instanceof ActionResult.Failed);
     }
 
     @Tag(TestKind.PUBLIC)

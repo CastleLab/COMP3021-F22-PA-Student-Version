@@ -57,7 +57,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             case Move move -> {
                 final var currentPlayerPos = this.state.getPlayerPositionById(action.getInitiator());
                 if (currentPlayerPos == null) {
-                    throw new IllegalArgumentException(PLAYER_NOT_FOUND);
+                    yield new ActionResult.Failed(action,PLAYER_NOT_FOUND);
                 }
                 yield this.processOneStepMove(currentPlayerPos, move);
             }
