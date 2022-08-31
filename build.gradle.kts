@@ -112,6 +112,6 @@ tasks {
         mergeinterfacesaggressively()
         dontskipnonpubliclibraryclassmembers()
         useuniqueclassmembernames()
-        optimizationpasses(5)
+//        optimizationpasses(5)
     }
 }
