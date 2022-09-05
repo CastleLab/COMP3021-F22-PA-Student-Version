@@ -189,6 +189,7 @@ public class GameState {
      */
     public void undo() {
         final var undoTransition = this.currentTransition.reverse();
+        this.currentTransition = new Transition();
         this.applyTransition(undoTransition);
         if (!this.history.empty()) {
             final var historyTransaction = this.history.pop().reverse();
