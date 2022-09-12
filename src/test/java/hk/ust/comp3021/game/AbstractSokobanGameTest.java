@@ -190,6 +190,27 @@ class AbstractSokobanGameTest {
 
     @Tag(TestKind.HIDDEN)
     @Test
+    void testPushOtherPlayerBox() {
+        String mapText = """
+                233
+                ######
+                #AB.@#
+                #b.a.#
+                #@...#
+                ######
+                """;
+        final var testMap = TestHelper.parseGameMap(mapText);
+        final var gameState = spy(new GameState(testMap));
+
+        final var game = new SokobanGameForTesting(gameState);
+        final var result = game.feedActionForProcessing(new Move.Down(0));
+
+        assertTrue(result instanceof ActionResult.Failed);
+        verify(gameState, never()).move(any(), any());
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
     void testMoveNonExistingPlayer() {
         String mapText = """
                 233

@@ -41,8 +41,8 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             case InvalidInput i -> new ActionResult.Failed(action, i.getMessage());
             case Undo ignored -> {
                 final var shouldUndo = this.state.getUndoQuota()
-                        .map(it -> it > 0)
-                        .orElse(true);
+                    .map(it -> it > 0)
+                    .orElse(true);
                 if (shouldUndo) {
                     this.state.undo();
                     yield new ActionResult.Success(action);
@@ -57,7 +57,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             case Move move -> {
                 final var currentPlayerPos = this.state.getPlayerPositionById(action.getInitiator());
                 if (currentPlayerPos == null) {
-                    yield new ActionResult.Failed(action,PLAYER_NOT_FOUND);
+                    yield new ActionResult.Failed(action, PLAYER_NOT_FOUND);
                 }
                 yield this.processOneStepMove(currentPlayerPos, move);
             }
@@ -80,7 +80,10 @@ public abstract class AbstractSokobanGame implements SokobanGame {
             }
             case Wall ignored -> new ActionResult.Failed(move, "You hit a wall.");
             case Player ignored -> new ActionResult.Failed(move, "You hit another player.");
-            case Box ignored -> {
+            case Box box -> {
+                if (box.getPlayerId() != move.getInitiator()) {
+                    yield new ActionResult.Failed(move, "You cannot move other players' boxes.");
+                }
                 final var nextBoxPos = move.nextPosition(nextPlayerPos);
                 if (!(this.state.getEntity(nextBoxPos) instanceof Empty))
                     yield new ActionResult.Failed(move, "Failed to push the box.");
