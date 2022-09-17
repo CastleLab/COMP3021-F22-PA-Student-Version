@@ -47,8 +47,8 @@ class TerminalRenderingEngineTest {
         renderingEngine.render(gameState);
 
         final var renderedContent = stream.getContent();
-        assertEquals(8, renderedContent.lines().count());
-        assertTrue(renderedContent.lines().allMatch(it -> it.length() >= 10 && it.length() <= 11)); // On Windows there may be \n\r
+        assertEquals(7, renderedContent.lines().count());
+        assertTrue(renderedContent.lines().allMatch(it -> it.length() >= 9 && it.length() <= 10)); // On Windows there may be \n\r
         final var lines = renderedContent.lines().toList();
         assertEquals('#', lines.get(0).charAt(0));
         assertEquals(' ', lines.get(0).charAt(8));
