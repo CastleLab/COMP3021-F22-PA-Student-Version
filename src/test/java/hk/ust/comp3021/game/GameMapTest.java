@@ -269,4 +269,33 @@ class GameMapTest {
             new GameMap(Integer.MAX_VALUE, Integer.MAX_VALUE, Collections.emptySet(), 0);
         });
     }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testOpenMap() {
+        final var invalidMap = """
+            233
+            #####
+            #A..@
+            #..B@#
+            #....#
+            #.a..#
+            #..b.#
+            ######
+            """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testMapWithoutWall() {
+        final var invalidMap = """
+            233
+            A...
+            ....
+            ...@
+            .a..
+            """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
 }
