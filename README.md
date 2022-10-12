@@ -1,5 +1,7 @@
 # COMP 3021 Programming Assignment 1 (Fall 2022)
 
+***PA1's solution and hidden tests are now released at [PA1](https://github.com/CastleLab/COMP3021-F22-PA-Student-Version/tree/PA1) branch of this repository. The original PA1 skeleton code is archived at tag [PA1-skeleton](https://github.com/CastleLab/COMP3021-F22-PA-Student-Version/tree/PA1-skeleton).***
+
 In this PA we are going to implement a terminal user
 interface ([TUI](https://en.wikipedia.org/wiki/Text-based_user_interface)) based,
 modified [Sokoban](https://en.wikipedia.org/wiki/Sokoban) game.
@@ -31,13 +33,13 @@ You are encouraged to:
 
 - Leverage the latest Java language features.
 - Add your own classes and methods to faciliate your implementation.
-- Construct extra test cases to throughly validate your implementation and share them with your classmates (or TAs). 
+- Construct extra test cases to throughly validate your implementation and share them with your classmates (or TAs).
   Note that no bonus will be given for this because we don't want the PA to be so [chur](https://learning.hku.hk/ccch9051/group-18/items/show/59).
 
 You are not allowed to:
 
 - Remove or modify the test code (in `src/test/java`) provided by us.
-- Delete or change the signature (name, arguments, visibility, etc.) of any given classes or methods in the skeleton code. 
+- Delete or change the signature (name, arguments, visibility, etc.) of any given classes or methods in the skeleton code.
 - Share your implementation with your classmates.
 
 ## Submission
@@ -55,7 +57,7 @@ Note that we are using automatic scripts to process your submission.
 **DO NOT add extra explanation** to the file; otherwise they will prevent our scripts from correctly processing your submission.
 Feel free to send us an email if you need clarification.
 
-You need to submit the file to [CASS](https://cssystem.cse.ust.hk/UGuides/cass/index.html). 
+You need to submit the file to [CASS](https://cssystem.cse.ust.hk/UGuides/cass/index.html).
 The deadline for this assignment is **September 30, 2022, 23:59:59** (inclusive).
 
 **We will grade your submission based on the latest committed version before the deadline.**
@@ -96,9 +98,9 @@ Here we list some key points.
 
 ### Actions
 
-- In PA1, the terminal based game supports up to 2 players. Such checking should be done in `hk.ust.comp3021.tui`. 
+- In PA1, the terminal based game supports up to 2 players. Such checking should be done in `hk.ust.comp3021.tui`.
 - Key `A,S,W,D` and `H,J,K,L` are used to move Player with ID 0 and 1 to `Left,Down,Up,Right` direction by 1 step, respectively
-- Key `U` are used to undo the last box movement. Undo is not specific to players and will revert the last box movement regardless of which player moves the last box. 
+- Key `U` are used to undo the last box movement. Undo is not specific to players and will revert the last box movement regardless of which player moves the last box.
 
 ### Undo
 
@@ -113,8 +115,8 @@ Here we list some key points.
 
 ### Deadlock Condition
 
-- Deadlock checking is not required. It is more about algorithm design and out of scope of this course. 
-- Game should exit either when the game is won or the player performs `Exit` action. 
+- Deadlock checking is not required. It is more about algorithm design and out of scope of this course.
+- Game should exit either when the game is won or the player performs `Exit` action.
 
 ### Map Validation
 
@@ -127,17 +129,17 @@ Here we list some key points.
 
 ## Reference Implementation
 
-We provide a reference implementation of this assignment (it is obfuscated and you won't see solutions in it) [here](https://course.cse.ust.hk/comp3021/assignments/Sokoban-proguard.jar). 
-You can run it with the following command: 
+We provide a reference implementation of this assignment (it is obfuscated and you won't see solutions in it) [here](https://course.cse.ust.hk/comp3021/assignments/Sokoban-proguard.jar).
+You can run it with the following command:
 ```bash
 java --enable-preview -jar Sokoban-proguard.jar path/to/game/map/file.
 ```
-We provide two sample game map in the `src/main/resources` folder. 
+We provide two sample game map in the `src/main/resources` folder.
 
 ## Run Check Style
 
-We have preconfigrued a gradle task to check style for you. 
-You can run `gradle checkstyleMain` in the integrated terminal of IntelliJ to check style. 
+We have preconfigrued a gradle task to check style for you.
+You can run `gradle checkstyleMain` in the integrated terminal of IntelliJ to check style.
 
 ## Academic Integrity
 
