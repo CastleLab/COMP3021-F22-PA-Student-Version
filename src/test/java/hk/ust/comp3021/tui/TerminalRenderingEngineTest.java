@@ -31,15 +31,15 @@ class TerminalRenderingEngineTest {
     @Test
     void testRender() {
         String testMap = """
-            233
-            ######
-            #A..@#
-            #...@###
-            #a....@##
-            #.a.....#
-            #..a.####
-            ######
-            """;
+                233
+                ######
+                #A..@#
+                #...@###
+                #a....@##
+                #.a.....#
+                #..a.####
+                ######
+                """;
         final var gameState = new GameState(TestHelper.parseGameMap(testMap));
         final var stream = new CapturingStream();
 

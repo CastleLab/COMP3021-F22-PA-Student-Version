@@ -1,7 +1,6 @@
 package hk.ust.comp3021.actions;
 
 import hk.ust.comp3021.game.Position;
-import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,8 +33,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
 
         @Override
         public @NotNull Position nextPosition(@NotNull Position currentPosition) {
-            // TODO
-            throw new NotImplementedException();
+            return Position.of(currentPosition.x(), currentPosition.y() + 1);
         }
     }
 
@@ -52,8 +50,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
 
         @Override
         public @NotNull Position nextPosition(@NotNull Position currentPosition) {
-            // TODO
-            throw new NotImplementedException();
+            return Position.of(currentPosition.x() - 1, currentPosition.y());
         }
     }
 
@@ -70,8 +67,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
 
         @Override
         public @NotNull Position nextPosition(@NotNull Position currentPosition) {
-            // TODO
-            throw new NotImplementedException();
+            return Position.of(currentPosition.x() + 1, currentPosition.y());
         }
     }
 
@@ -88,8 +84,7 @@ public abstract sealed class Move extends Action permits Move.Down, Move.Left, M
 
         @Override
         public @NotNull Position nextPosition(@NotNull Position currentPosition) {
-            // TODO
-            throw new NotImplementedException();
+            return Position.of(currentPosition.x(), currentPosition.y() - 1);
         }
     }
 }

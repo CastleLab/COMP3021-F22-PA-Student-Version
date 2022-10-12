@@ -105,6 +105,8 @@ tasks {
 
         keep("public class hk.ust.comp3021.Sokoban { public static void main(java.lang.String[]); }")
 
+        optimizations("!class/merging/horizontal")
+
         printmapping(jar.flatMap { it.destinationDirectory.file("${project.name}-proguard-mapping.txt") })
         overloadaggressively()
         flattenpackagehierarchy()

@@ -9,20 +9,24 @@ import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameMapTest {
 
     private static final String rectangularMap = """
-        233
-        ######
-        #A..@#
-        #...@#
-        #....#
-        #.a..#
-        #..a.#
-        ######
-        """;
+            233
+            ######
+            #A..@#
+            #...@#
+            #....#
+            #.a..#
+            #..a.#
+            ######
+            """;
 
     @Tag(TestKind.PUBLIC)
     @Test
@@ -86,4 +90,212 @@ class GameMapTest {
         assertTrue(entity instanceof Wall);
     }
 
+    private static final String nonRectangularMap = """
+            233
+            ######
+            #A..@#
+            #...@###
+            #a....@##
+            #.a.....#
+            #..a.####
+            ######
+            """;
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testWidthForNonRectangularMap() {
+        final var gameMap = TestHelper.parseGameMap(nonRectangularMap);
+        assertEquals(9, gameMap.getMaxWidth());
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testHeightForNonRectangularMap() {
+        final var gameMap = TestHelper.parseGameMap(nonRectangularMap);
+        assertEquals(7, gameMap.getMaxHeight());
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testUndoLimitParsing() {
+        final var gameMap = TestHelper.parseGameMap(rectangularMap);
+        assertEquals(233, gameMap.getUndoLimit().orElse(null));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testInsufficientDestinations() {
+        final var invalidMap = """
+                233
+                ######
+                #A..@#
+                #...@#
+                #a...#
+                #.a..#
+                #..a.#
+                ######
+                """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testEmptyMap() {
+        final var invalidMap = "";
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testMapWithoutPlayer() {
+        final var invalidMap = """
+                233
+                ###
+                #.#
+                ###
+                """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testUnmatchedPlayersAndBoxes() {
+        final var invalidMap = """
+                233
+                ######
+                #A..@#
+                #...@#
+                #a.b@#
+                #.a.@#
+                #..a.#
+                ######
+                """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testInvalidUndoLimit() {
+        final var invalidMap = """
+                -233
+                ######
+                #A..@#
+                #...@#
+                #a.b@#
+                #.a.@#
+                #..a.#
+                ######
+                """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testTwoPlayersMap() {
+        final var twoPlayersMap = """
+                233
+                ######
+                #A..@#
+                #..B@#
+                #....#
+                #.a..#
+                #..b.#
+                ######
+                """;
+        final var gameMap = TestHelper.parseGameMap(twoPlayersMap);
+        final var playerIds = gameMap.getPlayerIds();
+
+        final var expectedIds = new HashSet<Integer>();
+        expectedIds.add(0);
+        expectedIds.add(1);
+        assertEquals(expectedIds, playerIds);
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testManyPlayersMap() {
+        final var manyPlayersMap = """
+                233
+                ######
+                #A.P@@#
+                #vCB@@#
+                #.cpD@#
+                #Ga.d@#
+                #g.bV@#
+                ######
+                """;
+        final var gameMap = TestHelper.parseGameMap(manyPlayersMap);
+        final var playerIds = gameMap.getPlayerIds();
+
+        final var expectedIds = new HashSet<>(Arrays.asList(
+                0,
+                'P' - 'A',
+                'C' - 'A',
+                'B' - 'A',
+                'D' - 'A',
+                'G' - 'A',
+                'V' - 'A'
+        ));
+        assertEquals(expectedIds, playerIds);
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testDuplicatedPlayers() {
+        final var invalidMap = """
+                233
+                ######
+                #A..@#
+                #..A@#
+                #....#
+                #.a..#
+                #..b.#
+                ######
+                """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testParseMapWithoutUndoLimit() {
+        final var invalidMap = String.join("\n", rectangularMap.lines().skip(1).toList());
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testSuperLargeMap() {
+        assertDoesNotThrow(() -> {
+            new GameMap(Integer.MAX_VALUE, Integer.MAX_VALUE, Collections.emptySet(), 0);
+        });
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testOpenMap() {
+        final var invalidMap = """
+            233
+            #####
+            #A..@
+            #..B@#
+            #....#
+            #.a..#
+            #..b.#
+            ######
+            """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testMapWithoutWall() {
+        final var invalidMap = """
+            233
+            A...
+            ....
+            ...@
+            .a..
+            """;
+        assertThrowsExactly(IllegalArgumentException.class, () -> TestHelper.parseGameMap(invalidMap));
+    }
 }

@@ -21,15 +21,15 @@ class SokobanGameFactoryTest {
     void testLoadFromFile() throws IOException {
         final var mapFile = tempDir.resolve("tempMap.map");
         String rectangularMap = """
-            233
-            ######
-            #A..@#
-            #...@#
-            #....#
-            #.a..#
-            #..a.#
-            ######
-            """;
+                233
+                ######
+                #A..@#
+                #...@#
+                #....#
+                #.a..#
+                #..a.#
+                ######
+                """;
         Files.writeString(mapFile, rectangularMap);
         final var gameMap = SokobanGameFactory.loadGameMap(mapFile);
         assertEquals(6, gameMap.getMaxWidth());

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.Mockito.*;
 
 class TerminalSokobanGameTest {
@@ -24,8 +25,8 @@ class TerminalSokobanGameTest {
         final var renderingEngine = mock(TerminalRenderingEngine.class);
         when(gameState.isWin()).thenReturn(false);
         when(inputEngine.fetchAction())
-            .thenReturn(new InvalidInput(0, ""))
-            .thenReturn(new Exit(0));
+                .thenReturn(new InvalidInput(0, ""))
+                .thenReturn(new Exit(0));
 
         final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
         game.run();
@@ -46,6 +47,52 @@ class TerminalSokobanGameTest {
         verify(gameState, atLeastOnce()).getUndoQuota();
         verify(gameState, atLeast(0)).isWin();
         verify(renderingEngine, atLeastOnce()).message(any());
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testGameExit() {
+        final var gameState = mock(GameState.class);
+        final var inputEngine = mock(TerminalInputEngine.class);
+        final var renderingEngine = mock(TerminalRenderingEngine.class);
+        when(gameState.isWin()).thenReturn(false, false, false);
+        when(inputEngine.fetchAction())
+                .thenReturn(new InvalidInput(0, ""),
+                        new InvalidInput(0, ""),
+                        new Exit(0));
+
+        final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
+        game.run();
+
+        verify(renderingEngine, atLeastOnce()).message(any());
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testGameWin() {
+        final var gameState = mock(GameState.class);
+        final var inputEngine = mock(TerminalInputEngine.class);
+        final var renderingEngine = mock(TerminalRenderingEngine.class);
+        when(gameState.isWin()).thenReturn(false, false, false, true);
+        when(inputEngine.fetchAction())
+                .thenReturn(new InvalidInput(0, ""));
+
+        final var game = new TerminalSokobanGame(gameState, inputEngine, renderingEngine);
+        game.run();
+
+        verify(gameState, atLeastOnce()).isWin();
+        verify(renderingEngine, atLeastOnce()).message(any());
+    }
+
+    @Tag(TestKind.HIDDEN)
+    @Test
+    void testMoreThanTwoPlayers() {
+        final var gameState = mock(GameState.class);
+        final var inputEngine = mock(TerminalInputEngine.class);
+        final var renderingEngine = mock(TerminalRenderingEngine.class);
+        when(gameState.getAllPlayerPositions()).thenReturn(new HashSet<>(Arrays.asList(Position.of(1, 1), Position.of(1, 2), Position.of(1, 3))));
+
+        assertThrowsExactly(IllegalArgumentException.class, () -> new TerminalSokobanGame(gameState, inputEngine, renderingEngine));
     }
 
     @Tag(TestKind.PUBLIC)

@@ -1,13 +1,15 @@
 package hk.ust.comp3021.game;
 
+import hk.ust.comp3021.entities.Box;
+import hk.ust.comp3021.entities.Empty;
 import hk.ust.comp3021.entities.Entity;
-import hk.ust.comp3021.utils.NotImplementedException;
+import hk.ust.comp3021.entities.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The state of the Sokoban Game.
@@ -23,14 +25,40 @@ import java.util.Set;
  */
 public class GameState {
 
+    private final Stack<Transition> history = new Stack<>();
+
+    private final Map<Position, Entity> entities;
+
+    private final int boardWidth;
+
+    private final int boardHeight;
+
+    private final Set<Position> destinations;
+
+    private int undoQuota;
+
+    private Transition currentTransition = new Transition();
+
     /**
      * Create a running game state from a game map.
      *
      * @param map the game map from which to create this game state.
      */
     public GameState(@NotNull GameMap map) {
-        // TODO
-        throw new NotImplementedException();
+        this.entities = new HashMap<>();
+        this.boardWidth = map.getMaxWidth();
+        this.boardHeight = map.getMaxHeight();
+
+        for (int x = 0; x < boardWidth; x++) {
+            for (int y = 0; y < boardHeight; y++) {
+                final var pos = Position.of(x, y);
+                final var entity = map.getEntity(pos);
+                if (entity != null)
+                    this.entities.put(pos, entity);
+            }
+        }
+        this.destinations = map.getDestinations();
+        undoQuota = map.getUndoLimit().orElse(-1);
     }
 
     /**
@@ -40,8 +68,10 @@ public class GameState {
      * @return the current position of the player.
      */
     public @Nullable Position getPlayerPositionById(int id) {
-        // TODO
-        throw new NotImplementedException();
+        return this.entities.entrySet().stream()
+                .filter(e -> e.getValue() instanceof Player p && p.getId() == id)
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(null);
     }
 
     /**
@@ -50,8 +80,10 @@ public class GameState {
      * @return a set of positions of all players.
      */
     public @NotNull Set<Position> getAllPlayerPositions() {
-        // TODO
-        throw new NotImplementedException();
+        return this.entities.entrySet().stream()
+                .filter(e -> e.getValue() instanceof Player)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -61,8 +93,7 @@ public class GameState {
      * @return the entity object.
      */
     public @Nullable Entity getEntity(@NotNull Position position) {
-        // TODO
-        throw new NotImplementedException();
+        return this.entities.get(position);
     }
 
     /**
@@ -72,8 +103,7 @@ public class GameState {
      * @return a set of positions.
      */
     public @NotNull @Unmodifiable Set<Position> getDestinations() {
-        // TODO
-        throw new NotImplementedException();
+        return destinations;
     }
 
     /**
@@ -84,8 +114,11 @@ public class GameState {
      * {@link Optional#empty()} if the game has unlimited undo.
      */
     public Optional<Integer> getUndoQuota() {
-        // TODO
-        throw new NotImplementedException();
+        if (this.undoQuota < 0) {
+            return Optional.empty();
+        } else {
+            return Optional.of(this.undoQuota);
+        }
     }
 
     /**
@@ -95,8 +128,7 @@ public class GameState {
      * @return true is the game wins.
      */
     public boolean isWin() {
-// TODO
-        throw new NotImplementedException();
+        return this.destinations.stream().allMatch(p -> this.entities.get(p) instanceof Box);
     }
 
     /**
@@ -108,8 +140,13 @@ public class GameState {
      * @param to   The position to move the entity to.
      */
     public void move(Position from, Position to) {
-        // TODO
-        throw new NotImplementedException();
+        // move entity
+        final var entity = this.entities.remove(from);
+        this.entities.put(from, new Empty());
+        this.entities.put(to, entity);
+
+        // append to history
+        this.currentTransition.add(from, to);
     }
 
     /**
@@ -121,8 +158,26 @@ public class GameState {
      * Every undo actions reverts the game state to the last checkpoint.
      */
     public void checkpoint() {
-        // TODO
-        throw new NotImplementedException();
+        this.history.push(this.currentTransition);
+        this.currentTransition = new Transition();
+    }
+
+    /**
+     * Apply transition on current entity map.
+     * History is not touched in this method.
+     * Callers should maintain history themselves.
+     *
+     * @param transition the transition to apply.
+     */
+    private void applyTransition(Transition transition) {
+        transition.moves.entrySet().stream()
+                .map(e -> {
+                    final var entity = this.entities.remove(e.getKey());
+                    this.entities.put(e.getKey(), new Empty());
+                    return Map.entry(e.getValue(), entity);
+                })
+                .toList()
+                .forEach(e -> this.entities.put(e.getKey(), e.getValue()));
     }
 
     /**
@@ -133,8 +188,14 @@ public class GameState {
      * revert to the initial game state.
      */
     public void undo() {
-        // TODO
-        throw new NotImplementedException();
+        final var undoTransition = this.currentTransition.reverse();
+        this.currentTransition = new Transition();
+        this.applyTransition(undoTransition);
+        if (!this.history.empty()) {
+            final var historyTransaction = this.history.pop().reverse();
+            this.applyTransition(historyTransaction);
+            this.undoQuota--;
+        }
     }
 
     /**
@@ -144,8 +205,7 @@ public class GameState {
      * @return maximum width.
      */
     public int getMapMaxWidth() {
-        // TODO
-        throw new NotImplementedException();
+        return boardWidth;
     }
 
     /**
@@ -155,7 +215,39 @@ public class GameState {
      * @return maximum height.
      */
     public int getMapMaxHeight() {
-        // TODO
-        throw new NotImplementedException();
+        return boardHeight;
+    }
+
+    private static class Transition {
+        private final Map<Position, Position> moves;
+
+        private void add(Position from, Position to) {
+            final var key = this.moves.entrySet().stream()
+                    .filter(e -> e.getValue().equals(from))
+                    .map(Map.Entry::getKey)
+                    .findFirst().orElse(from);
+            this.moves.put(key, to);
+        }
+
+        private Transition(Map<Position, Position> moves) {
+            this.moves = moves;
+        }
+
+        private Transition() {
+            this.moves = new HashMap<>();
+        }
+
+        private Transition reverse() {
+            final var moves = this.moves.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+            return new Transition(moves);
+        }
+
+        @Override
+        public String toString() {
+            final var moves = this.moves.entrySet().stream()
+                    .map(e -> String.format("(%d,%d)->(%d,%d)", e.getKey().x(), e.getKey().y(), e.getValue().x(), e.getValue().y()))
+                    .toList();
+            return String.join(",", moves);
+        }
     }
 }

@@ -41,9 +41,9 @@ public class SokobanGameFactory {
         }
         final var gameMap = loadGameMap(file);
         return new TerminalSokobanGame(
-            new GameState(gameMap),
-            new TerminalInputEngine(System.in),
-            new TerminalRenderingEngine(System.out)
+                new GameState(gameMap),
+                new TerminalInputEngine(System.in),
+                new TerminalRenderingEngine(System.out)
         );
     }
 

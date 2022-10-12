@@ -7,7 +7,6 @@ import hk.ust.comp3021.entities.Wall;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.Position;
 import hk.ust.comp3021.game.RenderingEngine;
-import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
@@ -33,11 +32,10 @@ public class TerminalRenderingEngine implements RenderingEngine {
             for (int x = 0; x < state.getMapMaxWidth(); x++) {
                 final var entity = state.getEntity(Position.of(x, y));
                 final var charToPrint = switch (entity) {
-                    // TODO
-                    case Wall ignored -> throw new NotImplementedException();
-                    case Box b -> throw new NotImplementedException();
-                    case Player p -> throw new NotImplementedException();
-                    case Empty ignored -> throw new NotImplementedException();
+                    case Wall ignored -> '#';
+                    case Box b -> (char) (b.getPlayerId() + 'a');
+                    case Player p -> (char) (p.getId() + 'A');
+                    case Empty ignored -> state.getDestinations().contains(new Position(x, y)) ? '@' : '.';
                     case null -> ' ';
                 };
                 builder.append(charToPrint);
@@ -49,8 +47,6 @@ public class TerminalRenderingEngine implements RenderingEngine {
 
     @Override
     public void message(@NotNull String content) {
-        // TODO
-        // Hint: System.out is also a PrintStream.
-        throw new NotImplementedException();
+        outputSteam.println(content);
     }
 }
