@@ -24,7 +24,6 @@ class AbstractSokobanGameTest {
         final var result = game.feedActionForProcessing(action);
 
         assertTrue(result instanceof ActionResult.Failed);
-        assertEquals(message, ((ActionResult.Failed) result).getReason());
     }
 
     @Tag(TestKind.HIDDEN)

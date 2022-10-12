@@ -42,7 +42,7 @@ class TerminalInputEngineTest {
 
     @Tag(TestKind.HIDDEN)
     @ParameterizedTest
-    @CsvSource({"R,0", "U,1"})
+    @CsvSource({"U,-1"})
     void testUndo(String input, int playerId) {
         final var inputStream = fixValueStream(input);
 
@@ -50,7 +50,6 @@ class TerminalInputEngineTest {
         final var action = inputEngine.fetchAction();
 
         assertTrue(action instanceof Undo);
-        assertEquals(playerId, action.getInitiator());
     }
 
     @Tag(TestKind.HIDDEN)
