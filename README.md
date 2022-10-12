@@ -129,10 +129,10 @@ Here we list some key points.
 
 ## Reference Implementation
 
-We provide a reference implementation of this assignment (it is obfuscated and you won't see solutions in it) [here](https://course.cse.ust.hk/comp3021/assignments/Sokoban-proguard.jar).
+We provide a reference implementation of this assignment (it is obfuscated and you won't see solutions in it) [here](https://course.cse.ust.hk/comp3021/assignments/Sokoban-proguard-PA1.jar).
 You can run it with the following command:
 ```bash
-java --enable-preview -jar Sokoban-proguard.jar path/to/game/map/file.
+java --enable-preview -jar Sokoban-proguard-PA1.jar path/to/game/map/file.
 ```
 We provide two sample game map in the `src/main/resources` folder.
 
