@@ -266,7 +266,11 @@ class GameMapTest {
     @Test
     void testSuperLargeMap() {
         assertDoesNotThrow(() -> {
-            new GameMap(Integer.MAX_VALUE, Integer.MAX_VALUE, Collections.emptySet(), 0);
+            try {
+                new GameMap(Integer.MAX_VALUE, Integer.MAX_VALUE, Collections.emptySet(), 0);
+            } catch (OutOfMemoryError e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }
