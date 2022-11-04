@@ -11,6 +11,7 @@
       <option name="taskNames">
         <list>
           <option value="run" />
+          <option value="--args=$PROJECT_DIR$/src/main/resources/map00.map" />
         </list>
       </option>
       <option name="vmOptions" />
