@@ -2,6 +2,8 @@
 
 ***PA1's solution and hidden tests are now released at [PA1](https://github.com/CastleLab/COMP3021-F22-PA-Student-Version/tree/PA1) branch of this repository. The original PA1 skeleton code is archived at tag [PA1-skeleton](https://github.com/CastleLab/COMP3021-F22-PA-Student-Version/tree/PA1-skeleton).***
 
+***PA1's grade is now published and appeal period will begin from Nov. 7. See the [announcement](https://github.com/CastleLab/COMP3021-F22-PA-Student-Version/discussions/142).***
+
 In this PA we are going to implement a terminal user
 interface ([TUI](https://en.wikipedia.org/wiki/Text-based_user_interface)) based,
 modified [Sokoban](https://en.wikipedia.org/wiki/Sokoban) game.
