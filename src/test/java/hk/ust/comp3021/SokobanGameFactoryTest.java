@@ -1,8 +1,10 @@
 package hk.ust.comp3021;
 
+import hk.ust.comp3021.utils.TestExtension;
 import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(TestExtension.class)
 class SokobanGameFactoryTest {
 
     @TempDir

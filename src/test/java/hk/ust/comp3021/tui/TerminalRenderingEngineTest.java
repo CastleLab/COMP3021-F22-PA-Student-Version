@@ -1,10 +1,12 @@
 package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.game.GameState;
+import hk.ust.comp3021.utils.TestExtension;
 import hk.ust.comp3021.utils.TestHelper;
 import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -13,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(TestExtension.class)
 class TerminalRenderingEngineTest {
 
     @Tag(TestKind.PUBLIC)

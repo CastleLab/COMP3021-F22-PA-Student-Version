@@ -2,10 +2,12 @@ package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.entities.*;
 import hk.ust.comp3021.utils.ShouldNotReachException;
+import hk.ust.comp3021.utils.TestExtension;
 import hk.ust.comp3021.utils.TestHelper;
 import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(TestExtension.class)
 class GameStateTest {
 
     @Tag(TestKind.HIDDEN)

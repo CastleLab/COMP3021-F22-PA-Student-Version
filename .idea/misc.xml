@@ -4,7 +4,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_18_PREVIEW" project-jdk-name="azul-18" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_18_PREVIEW" project-jdk-name="zulu-18" project-jdk-type="JavaSDK" />
   <component name="ScalaSbtSettings">
     <option name="customVMPath" />
     <option name="vmParameters" value="-XX:+UseShenandoahGC" />

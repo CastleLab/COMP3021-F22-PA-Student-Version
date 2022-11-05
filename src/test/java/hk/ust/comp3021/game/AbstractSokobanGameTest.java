@@ -1,10 +1,12 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.actions.*;
+import hk.ust.comp3021.utils.TestExtension;
 import hk.ust.comp3021.utils.TestHelper;
 import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Optional;
 import java.util.Random;
@@ -12,6 +14,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(TestExtension.class)
 class AbstractSokobanGameTest {
 
     @Tag(TestKind.HIDDEN)

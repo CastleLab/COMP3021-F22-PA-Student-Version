@@ -4,9 +4,11 @@ import hk.ust.comp3021.actions.Exit;
 import hk.ust.comp3021.actions.InvalidInput;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.Position;
+import hk.ust.comp3021.utils.TestExtension;
 import hk.ust.comp3021.utils.TestKind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(TestExtension.class)
 class TerminalSokobanGameTest {
 
     @Tag(TestKind.PUBLIC)
