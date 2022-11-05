@@ -92,6 +92,20 @@ tasks {
         jvmArgs("--enable-preview")
     }
 
+    register<JavaExec>("grade") {
+        group = "verification"
+
+        systemProperties(
+            "junit.jupiter.execution.timeout.testable.method.default" to "2000 ms"
+        )
+
+        dependsOn(testClasses)
+        classpath = sourceSets.test.get().runtimeClasspath
+        main = "hk.ust.comp3021.utils.Grader"
+        jvmArgs("--enable-preview")
+    }
+
+
     withType<Checkstyle> {
 
     }
