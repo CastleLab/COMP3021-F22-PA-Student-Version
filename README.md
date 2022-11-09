@@ -139,24 +139,7 @@ If any uncaught exception occurs during the demonstration, you will get 0 for th
 We provide a demonstration of reference implementation of this assignment. 
 The demonstration video can be found on [YouTube](https://youtu.be/LiIyaaoaWxI).
 
-### Download JavaFX
-
-You can download JavaFX from [here](https://gluonhq.com/products/javafx/).
-Remember to select the correct version of JavaFX.
-- `JavaFX Version`: >= 18
-- `Operating System`: choose according to your current computer
-- `Architecture`: choose according to your current computer
-- `Type`: SDK
-
-After downloading, unzip the downloaded file, and you will get a folder named `javafx-sdk-<version>`.
-
-### Run
-
-Run with the following command: (replace `{path-to-javafx-sdk-<version>}` with the path to the unzipped JavaFX SDK folder)
-
-```bash
-java --enable-preview -jar --module-path={path-to-javafx-sdk-<version>}/lib --add-modules javafx.base,javafx.controls,javafx.fxml,javafx.media,javafx.graphics Sokoban-proguard-PA2.jar
-```
+***A reference implementation is not available since we cannot release it without leaking solutions.***
 
 ## Run Check Style
 
