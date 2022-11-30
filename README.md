@@ -181,7 +181,7 @@ In the example [above](#Functionality Design), the frameRate is set to 60, which
 - Method `run` starts the game by spawn threads for each `InputEngine` and `RenderingEngine` instance.
   When `run` method returns, all spawned threads should already terminate.
 - For each action file (and the corresponding `InputEngine`), all actions before (inclusive) the first `Exit` (`E`) should be processed (i.e., fed to the `processAction` method).
-- After the first `Exit` (`E`) is processed, all other actions in the action file should be ignored (i.e., not fed to the `processAction` method).
+- For each input engine, after the first `Exit` (`E`) is processed, all other actions in the action file of this input engine should be ignored (i.e., not fed to the `processAction` method).
 - Actions in the same action file should be processed in the same order as they appear in the action file.
 - The game ends when either:
   - The winning condition is satisfied (i.e., all boxes are placed on the destinations).
