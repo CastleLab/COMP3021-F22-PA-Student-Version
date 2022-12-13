@@ -1,5 +1,7 @@
 # COMP 3021 Programming Assignment 3 (PA3) (Fall 2022)
 
+**PA3's solution and hidden tests are now released at PA3 branch of this repository. The original PA3 skeleton code is archived at tag PA3-skeleton.**
+
 In this PA we are going to implement a multithreading,
 modified [Sokoban](https://en.wikipedia.org/wiki/Sokoban) game.
 
