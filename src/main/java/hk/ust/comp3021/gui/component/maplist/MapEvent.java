@@ -10,7 +10,7 @@ public class MapEvent extends Event {
     /**
      * The event type of opening a map.
      */
-    public static final EventType<MapEvent> OPEN_MAP_EVENT_TYPE = new EventType<>("OPEN_MAP");
+    public static EventType<MapEvent> OPEN_MAP_EVENT_TYPE = new EventType<>("OPEN_MAP");
 
     private final MapModel model;
 

@@ -1,11 +1,16 @@
 package hk.ust.comp3021.gui;
 
+import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.gui.component.maplist.MapEvent;
 import hk.ust.comp3021.gui.scene.game.ExitEvent;
 import hk.ust.comp3021.gui.scene.game.GameScene;
 import hk.ust.comp3021.gui.scene.start.StartScene;
+import hk.ust.comp3021.gui.utils.Message;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 /**
  * The JavaFX application that launches the game.
@@ -13,40 +18,58 @@ import javafx.stage.Stage;
 public class App extends Application {
     private Stage primaryStage;
 
-    /**
-     * Set up the primary stage and show the {@link StartScene}.
-     *
-     * @param primaryStage the primary stage for this application, onto which
-     *                     the application scene can be set.
-     *                     Applications may create other stages, if needed, but they will not be
-     *                     primary stages.
-     * @throws Exception if something goes wrong.
-     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         primaryStage.setTitle("Sokoban Game - COMP3021 2022Fall");
 
-        // TODO
+        primaryStage.setScene(this.loadStartScene());
+
+        primaryStage.show();
+    }
+
+    private Scene _startScene;
+
+    private Scene loadStartScene() throws IOException {
+        if (_startScene == null) {
+            _startScene = new StartScene();
+            _startScene.addEventHandler(MapEvent.OPEN_MAP_EVENT_TYPE, this::onOpenMap);
+        }
+        return _startScene;
+    }
+
+    private Scene loadGameScene(GameState gameState) throws IOException {
+        final var gameScene = new GameScene(gameState);
+        gameScene.addEventHandler(ExitEvent.EVENT_TYPE, this::onExitGame);
+        return gameScene;
     }
 
     /**
      * Event handler for opening a map.
-     * Swith to the {@link GameScene} in the {@link this#primaryStage}.
      *
      * @param event The event data related to the map being opened.
      */
     public void onOpenMap(MapEvent event) {
-        // TODO
+        try {
+            final var gameState = new GameState(event.getModel().gameMap());
+            final var gameScene = loadGameScene(gameState);
+            this.primaryStage.setScene(gameScene);
+        } catch (IOException e) {
+            Message.error("Failed to load game view", e.getMessage());
+        }
     }
 
     /**
      * Event handler for exiting the game.
-     * Switch to the {@link StartScene} in the {@link this#primaryStage}.
      *
      * @param event The event data related to exiting the game.
      */
     public void onExitGame(ExitEvent event) {
-        // TODO
+        try {
+            final var startScene = loadStartScene();
+            this.primaryStage.setScene(startScene);
+        } catch (IOException e) {
+            Message.error("Failed to load start view", e.getMessage());
+        }
     }
 }

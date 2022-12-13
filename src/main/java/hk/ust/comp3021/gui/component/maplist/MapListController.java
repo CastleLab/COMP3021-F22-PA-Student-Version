@@ -14,19 +14,8 @@ public class MapListController implements Initializable {
     @FXML
     private ListView<MapModel> list;
 
-    /**
-     * Initialize the controller.
-     * You should customize the items in the list view here.
-     * Set the item in the {@link MapList} to be {@link MapListCell}.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     * @see <a href="https://docs.oracle.com/javafx/2/ui_controls/list-view.htm">JavaFX ListView</a>
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO
+        list.setCellFactory(listView -> new MapListCell());
     }
 }

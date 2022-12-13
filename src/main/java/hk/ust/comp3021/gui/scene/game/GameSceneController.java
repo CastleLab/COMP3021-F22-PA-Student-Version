@@ -1,9 +1,9 @@
 package hk.ust.comp3021.gui.scene.game;
 
 import hk.ust.comp3021.game.GameState;
+import hk.ust.comp3021.gui.utils.Resource;
 import hk.ust.comp3021.gui.component.board.GameBoard;
 import hk.ust.comp3021.gui.component.control.ControlPanel;
-import hk.ust.comp3021.gui.utils.Resource;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,17 +28,8 @@ public class GameSceneController implements Initializable {
 
     private GUISokobanGame game;
 
-    /**
-     * Initialize the controller as you need.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO
     }
 
     /**
@@ -48,8 +39,8 @@ public class GameSceneController implements Initializable {
         this.game = new GUISokobanGame(gameState, controlPanel.getController(), gameBoard.getController());
         // generate player controls
         gameState.getAllPlayers().forEach(player -> this.controlPanel.getController().addPlayer(
-            player,
-            Resource.getPlayerImageURL(player.getId())
+                player,
+                Resource.getPlayerImageURL(player.getId())
         ));
 
         final var gameLoopThread = new Thread(game);
@@ -58,12 +49,11 @@ public class GameSceneController implements Initializable {
 
     /**
      * Event handler when the exit button is clicked.
-     * Fire {@link ExitEvent} so that {@link hk.ust.comp3021.gui.App} can handle it and switch to the start scene.
      *
      * @param event The event data
      */
     @FXML
     public void onExit(ActionEvent event) {
-        // TODO
+        this.gamePane.fireEvent(new ExitEvent());
     }
 }

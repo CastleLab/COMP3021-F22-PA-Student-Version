@@ -28,18 +28,16 @@ public class MapListItemController implements Initializable {
 
     private final Property<MapModel> mapModelProperty = new SimpleObjectProperty<>();
 
-    /**
-     * Initialize the controller as you need.
-     * You should update the displayed information for the list item when the map model changes.
-     *
-     * @param location  The location used to resolve relative paths for the root object, or
-     *                  {@code null} if the location is not known.
-     * @param resources The resources used to localize the root object, or {@code null} if
-     *                  the root object was not localized.
-     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // TODO
+        this.mapModelProperty.addListener(ev -> render());
+    }
+
+    private void render() {
+        final var model = this.mapModelProperty.getValue();
+        this.mapName.setText(model.name());
+        this.loadAt.setText(model.loadAt().toString());
+        this.mapFilePath.setText(model.file().toString());
     }
 
     /**

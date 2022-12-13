@@ -7,7 +7,6 @@ import java.io.IOException;
 
 /**
  * The cell of the map list.
- * This class is the customized item in the {@link MapList}.
  */
 public class MapListCell extends ListCell<MapModel> {
 
