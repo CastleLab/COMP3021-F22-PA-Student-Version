@@ -1,5 +1,7 @@
 # COMP 3021 Programming Assignment 2 (PA2) (Fall 2022)
 
+**PA2's solution is now released at PA2 branch of this repository. The original PA2 skeleton code is archived at tag PA2-skeleton.**
+
 In this PA we are going to implement a graphical user
 interface ([GUI](https://en.wikipedia.org/wiki/Graphical_user_interface)) based,
 modified [Sokoban](https://en.wikipedia.org/wiki/Sokoban) game.
@@ -136,7 +138,7 @@ If any uncaught exception occurs during the demonstration, you will get 0 for th
 
 ## Reference Implementation
 
-We provide a demonstration of reference implementation of this assignment. 
+We provide a demonstration of reference implementation of this assignment.
 The demonstration video can be found on [YouTube](https://youtu.be/LiIyaaoaWxI).
 
 ***A reference implementation is not available since we cannot release it without leaking solutions.***
