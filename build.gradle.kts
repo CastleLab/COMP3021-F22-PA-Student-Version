@@ -43,6 +43,9 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.8.0")
     testImplementation("org.apache.commons:commons-collections4:4.4")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:4.7.0")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
 checkstyle {
@@ -96,6 +99,20 @@ tasks {
 
         jvmArgs("--enable-preview")
     }
+
+    register<JavaExec>("grade") {
+        group = "verification"
+
+        systemProperties(
+            "junit.jupiter.execution.timeout.testable.method.default" to "2000 ms"
+        )
+
+        dependsOn(testClasses)
+        classpath = sourceSets.test.get().runtimeClasspath
+        main = "hk.ust.comp3021.utils.Grader"
+        jvmArgs("--enable-preview")
+    }
+
 
     withType<Checkstyle> {
 
