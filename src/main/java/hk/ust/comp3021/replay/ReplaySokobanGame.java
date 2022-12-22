@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.*;
@@ -81,11 +82,11 @@ public class ReplaySokobanGame extends AbstractSokobanGame {
      * @throws IllegalArgumentException when there are more than two players in the map.
      */
     public ReplaySokobanGame(
-            @NotNull Mode mode,
-            int frameRate,
-            @NotNull GameState gameState,
-            @NotNull List<? extends InputEngine> inputEngines,
-            @NotNull RenderingEngine renderingEngine
+        @NotNull Mode mode,
+        int frameRate,
+        @NotNull GameState gameState,
+        @NotNull List<? extends InputEngine> inputEngines,
+        @NotNull RenderingEngine renderingEngine
     ) {
         super(gameState);
         if (inputEngines.size() == 0)
@@ -102,9 +103,9 @@ public class ReplaySokobanGame extends AbstractSokobanGame {
      * @param renderingEngine the rendering engine.
      */
     public ReplaySokobanGame(
-            @NotNull GameState gameState,
-            @NotNull List<? extends InputEngine> inputEngines,
-            @NotNull RenderingEngine renderingEngine) {
+        @NotNull GameState gameState,
+        @NotNull List<? extends InputEngine> inputEngines,
+        @NotNull RenderingEngine renderingEngine) {
         this(Mode.FREE_RACE, DEFAULT_FRAME_RATE, gameState, inputEngines, renderingEngine);
     }
 
@@ -119,6 +120,8 @@ public class ReplaySokobanGame extends AbstractSokobanGame {
     private final AtomicBoolean someActionAfterRender = new AtomicBoolean(false);
     private final AtomicInteger roundRobinIndex = new AtomicInteger(0);
     private final Condition roundRobinCond = lock.newCondition();
+
+    private Semaphore[] robinChain;
 
     /**
      * The implementation of the Runnable for each input engine thread.
@@ -149,45 +152,37 @@ public class ReplaySokobanGame extends AbstractSokobanGame {
             try {
                 while (true) {
                     final var action = inputEngine.fetchAction();
+                    if (mode == Mode.ROUND_ROBIN) {
+                        robinChain[index].acquire();
+                    }
                     lock.lock();
-                    if (firstRendered.get()) {
-                        firstRenderCond.await();
-                    }
-                    if (shouldStop()) {
-                        firstRenderCond.signalAll();
-                        roundRobinCond.signalAll();
+                    try {
+                        if (firstRendered.get()) {
+                            firstRenderCond.await();
+                        }
+                        if (shouldStop()) {
+                            firstRenderCond.signalAll();
+                            roundRobinCond.signalAll();
+                            break;
+                        }
+                        if (!exited) {
+                            final var result = processAction(action);
+                            if (result instanceof ActionResult.Failed failed) {
+                                renderingEngine.message(failed.getReason());
+                            }
+                            if (action instanceof Exit) {
+                                exhaustedInputEngines++;
+                                exited = true;
+                            } else {
+                                someActionAfterRender.set(true);
+                            }
+                        }
+                    } finally {
+                        if (mode == Mode.ROUND_ROBIN) {
+                            robinChain[(index + 1) % robinChain.length].release();
+                        }
                         lock.unlock();
-                        break;
                     }
-                    if (mode == Mode.ROUND_ROBIN) {
-                        while (roundRobinIndex.get() != index) {
-                            roundRobinCond.await();
-                        }
-                    }
-                    if (shouldStop()) {
-                        firstRenderCond.signalAll();
-                        roundRobinCond.signalAll();
-                        lock.unlock();
-                        break;
-                    }
-
-                    if (!exited) {
-                        final var result = processAction(action);
-                        if (result instanceof ActionResult.Failed failed) {
-                            renderingEngine.message(failed.getReason());
-                        }
-                        if (action instanceof Exit) {
-                            exhaustedInputEngines++;
-                            exited = true;
-                        } else {
-                            someActionAfterRender.set(true);
-                        }
-                    }
-                    if (mode == Mode.ROUND_ROBIN) {
-                        roundRobinIndex.set((roundRobinIndex.get() + 1) % inputEngines.size());
-                        roundRobinCond.signalAll();
-                    }
-                    lock.unlock();
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -224,8 +219,8 @@ public class ReplaySokobanGame extends AbstractSokobanGame {
                 }
                 lock.lock();
                 final var undoQuotaMessage = state.getUndoQuota()
-                        .map(it -> String.format(UNDO_QUOTA_TEMPLATE, it))
-                        .orElse(UNDO_QUOTA_UNLIMITED);
+                    .map(it -> String.format(UNDO_QUOTA_TEMPLATE, it))
+                    .orElse(UNDO_QUOTA_UNLIMITED);
                 renderingEngine.message(undoQuotaMessage);
                 renderingEngine.render(state);
                 if (firstRendered.get()) {
@@ -249,11 +244,15 @@ public class ReplaySokobanGame extends AbstractSokobanGame {
      */
     @Override
     public void run() {
+        robinChain = new Semaphore[inputEngines.size()];
         final var threads = new ArrayList<Thread>(inputEngines.size() + 1);
         for (var i = 0; i < inputEngines.size(); i++) {
             final var th = new Thread(new InputEngineRunnable(i, inputEngines.get(i)));
+            final var s = new Semaphore(0);
+            robinChain[i] = s;
             threads.add(i, th);
         }
+        robinChain[0].release();
         threads.add(inputEngines.size(), new Thread(new RenderingEngineRunnable()));
         threads.forEach(Thread::start);
         threads.forEach(th -> {
